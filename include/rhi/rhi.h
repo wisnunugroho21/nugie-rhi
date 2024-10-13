@@ -1158,20 +1158,47 @@ namespace rhi
     // Framebuffer
     //////////////////////////////////////////////////////////////////////////
 
+    struct ClearColor
+    {
+        bool isClear = false;
+        Color value = Color(0.0f);
+    };
+
+    struct ClearDepth
+    {
+        bool isClear = false;
+        float value = 1.0f;
+    };
+
+    struct ClearStencil
+    {
+        bool isClear = false;
+        uint8_t value = 0u;
+    };
+
     struct FramebufferAttachment
     {
         ITexture* texture = nullptr;
         TextureSubresourceSet subresources = TextureSubresourceSet(0, 1, 0, 1);
         Format format = Format::UNKNOWN;
         bool isReadOnly = false;
+        bool dontStore = false;
+
+        ClearColor clearColor{};
+        ClearDepth clearDepth{};
+        ClearStencil clearStencil{};
         
-        constexpr FramebufferAttachment& setTexture(ITexture* t) { texture = t; return *this; }
-        constexpr FramebufferAttachment& setSubresources(TextureSubresourceSet value) { subresources = value; return *this; }
-        constexpr FramebufferAttachment& setArraySlice(ArraySlice index) { subresources.baseArraySlice = index; subresources.numArraySlices = 1; return *this; }
-        constexpr FramebufferAttachment& setArraySliceRange(ArraySlice index, ArraySlice count) { subresources.baseArraySlice = index; subresources.numArraySlices = count; return *this; }
-        constexpr FramebufferAttachment& setMipLevel(MipLevel level) { subresources.baseMipLevel = level; subresources.numMipLevels = 1; return *this; }
-        constexpr FramebufferAttachment& setFormat(Format f) { format = f; return *this; }
-        constexpr FramebufferAttachment& setReadOnly(bool ro) { isReadOnly = ro; return *this; }
+        FramebufferAttachment& setTexture(ITexture* t) { texture = t; return *this; }
+        FramebufferAttachment& setSubresources(TextureSubresourceSet value) { subresources = value; return *this; }
+        FramebufferAttachment& setArraySlice(ArraySlice index) { subresources.baseArraySlice = index; subresources.numArraySlices = 1; return *this; }
+        FramebufferAttachment& setArraySliceRange(ArraySlice index, ArraySlice count) { subresources.baseArraySlice = index; subresources.numArraySlices = count; return *this; }
+        FramebufferAttachment& setMipLevel(MipLevel level) { subresources.baseMipLevel = level; subresources.numMipLevels = 1; return *this; }
+        FramebufferAttachment& setFormat(Format f) { format = f; return *this; }
+        FramebufferAttachment& setReadOnly(bool ro) { isReadOnly = ro; return *this; }
+        FramebufferAttachment& setDontStore(bool ds) { dontStore = ds; return *this; }
+        FramebufferAttachment& setClearColor(Color value) { clearColor.value = value; clearColor.isClear = true; return *this; }
+        FramebufferAttachment& setClearDepth(float value) { clearDepth.value = value; clearDepth.isClear = true; return *this; }
+        FramebufferAttachment& setClearStencil(uint8_t value) { clearStencil.value = value; clearStencil.isClear = true; return *this; }
 
         [[nodiscard]] bool valid() const { return texture != nullptr; }
     };

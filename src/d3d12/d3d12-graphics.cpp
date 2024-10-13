@@ -315,6 +315,28 @@ namespace rhi::d3d12
 
         const bool updateShadingRate = !m_CurrentGraphicsStateValid || m_CurrentGraphicsState.shadingRateState != state.shadingRateState;
 
+        if (updateFramebuffer)
+        {
+            const FramebufferDesc& desc = state.framebuffer->getDesc();
+
+            for (size_t i = 0; i < desc.colorAttachments.size(); i++)
+            {
+                const FramebufferAttachment& att = desc.colorAttachments[i];
+                if (att.valid() && att.clearColor.isClear)
+                {
+                    clearTextureFloat(att.texture, att.subresources, att.clearColor.value);
+                }
+            }
+
+            const FramebufferAttachment& att = desc.depthAttachment;
+            if (att.valid() && (att.clearDepth.isClear || att.clearStencil.isClear))
+            {
+                clearDepthStencilTexture(desc.depthAttachment.texture, desc.depthAttachment.subresources, 
+                    att.clearDepth.isClear, att.clearDepth.value,
+                    att.clearStencil.isClear, att.clearStencil.value);
+            }            
+        }
+
         uint32_t bindingUpdateMask = 0;
         if (!m_CurrentGraphicsStateValid || updateRootSignature)
             bindingUpdateMask = ~0u;
