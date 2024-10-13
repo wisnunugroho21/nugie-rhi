@@ -128,23 +128,6 @@ set(src_validation
     src/common/sparse-bitset.h
     src/common/sparse-bitset.cpp)
 
-set(include_d3d11
-    include/rhi/d3d11.h)
-set(src_d3d11
-    src/common/dxgi-format.h
-    src/common/dxgi-format.cpp
-    src/d3d11/d3d11-buffer.cpp
-    src/d3d11/d3d11-commandlist.cpp
-    src/d3d11/d3d11-compute.cpp
-    src/d3d11/d3d11-constants.cpp
-    src/d3d11/d3d11-backend.h
-    src/d3d11/d3d11-device.cpp
-    src/d3d11/d3d11-graphics.cpp
-    src/d3d11/d3d11-queries.cpp
-    src/d3d11/d3d11-resource-bindings.cpp
-    src/d3d11/d3d11-shader.cpp
-    src/d3d11/d3d11-texture.cpp)
-
 set(include_d3d12
     include/rhi/d3d12.h)
 set(src_d3d12
@@ -229,37 +212,6 @@ set_target_properties(rhi PROPERTIES FOLDER "RHI")
 target_compile_definitions(rhi PRIVATE RHI_WITH_AFTERMATH=$<BOOL:${RHI_WITH_AFTERMATH}>)
 
 # implementations
-
-if (RHI_WITH_DX11)
-    if (RHI_BUILD_SHARED)
-        set(rhi_d3d11_target rhi)
-
-        target_sources(${rhi_d3d11_target} PRIVATE
-            ${include_d3d11}
-            ${src_d3d11})
-    else()
-        set(rhi_d3d11_target rhi_d3d11)
-
-        add_library(${rhi_d3d11_target} STATIC
-            ${include_d3d11}
-            ${src_d3d11})
-
-        set_target_properties(${rhi_d3d11_target} PROPERTIES FOLDER "RHI")
-        target_include_directories(${rhi_d3d11_target} PRIVATE include)
-    endif()
-
-    target_link_libraries(${rhi_d3d11_target} PUBLIC d3d11 dxguid)
-
-    if (RHI_WITH_NVAPI)
-        target_link_libraries(${rhi_d3d11_target} PUBLIC nvapi)
-    endif()
-    target_compile_definitions(${rhi_d3d11_target} PRIVATE RHI_D3D11_WITH_NVAPI=$<BOOL:${RHI_WITH_NVAPI}>)
-
-    if (RHI_WITH_AFTERMATH)
-        target_link_libraries(${rhi_d3d11_target} PUBLIC aftermath)
-    endif()
-    target_compile_definitions(${rhi_d3d11_target} PRIVATE RHI_WITH_AFTERMATH=$<BOOL:${RHI_WITH_AFTERMATH}>)
-endif()
 
 if (RHI_WITH_DX12)
     if (RHI_BUILD_SHARED)
@@ -349,10 +301,6 @@ if (RHI_INSTALL)
         LIBRARY DESTINATION lib)
 
     if (NOT RHI_BUILD_SHARED)
-        if (RHI_WITH_DX11)
-            install(TARGETS ${rhi_d3d11_target} DESTINATION "lib" EXPORT "rhiTargets")
-        endif()
-
         if (RHI_WITH_DX12)
             install(TARGETS ${rhi_d3d12_target} DESTINATION "lib" EXPORT "rhiTargets")
         endif()

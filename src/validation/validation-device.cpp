@@ -541,9 +541,9 @@ namespace rhi::validation
         return m_Device->createSampler(d);
     }
 
-    InputLayoutHandle DeviceWrapper::createInputLayout(const VertexAttributeDesc* d, uint32_t attributeCount, IShader* vertexShader)
+    InputLayoutHandle DeviceWrapper::createInputLayout(const VertexAttributeDesc* d, uint32_t attributeCount)
     {
-        return m_Device->createInputLayout(d, attributeCount, vertexShader);
+        return m_Device->createInputLayout(d, attributeCount);
     }
 
     EventQueryHandle DeviceWrapper::createEventQuery()
@@ -851,60 +851,7 @@ namespace rhi::validation
                     ssDuplicateBindings << std::endl << utils::ShaderStageToString(stage) << ": " << duplicates;
 
                     anyDuplicateBindings = true;
-                }
-                else if (m_Device->getGraphicsAPI() == GraphicsAPI::D3D11)
-                {
-                    // Check for overlapping layouts on DX11, because the backend implements each binding set as a single
-                    // call to a function like PSSetShaderResources. If binding sets overlap, a set with higher index
-                    // will overwrite bindings from the lower-indexed sets, even if they are on different slots.
-                    // Do this only when there are no duplicates, as with duplicates the layouts will always overlap.
-
-                    bool overlapSRV = false;
-                    bool overlapSampler = false;
-                    bool overlapUAV = false;
-                    bool overlapCB = false;
-
-                    for (int i = 0; i < numBindingLayouts - 1; i++)
-                    {
-                        const ShaderBindingSet& set1 = bindingsPerLayout[i];
-
-                        for (int j = i + 1; j < numBindingLayouts; j++)
-                        {
-                            const ShaderBindingSet& set2 = bindingsPerLayout[j];
-
-                            overlapSRV = overlapSRV || set1.rangeSRV.overlapsWith(set2.rangeSRV);
-                            overlapSampler = overlapSampler || set1.rangeSampler.overlapsWith(set2.rangeSampler);
-                            overlapUAV = overlapUAV || set1.rangeUAV.overlapsWith(set2.rangeUAV);
-                            overlapCB = overlapCB || set1.rangeCB.overlapsWith(set2.rangeCB);
-                        }
-                    }
-
-                    if (overlapSRV || overlapSampler || overlapUAV || overlapCB)
-                    {
-                        if (!anyOverlappingBindings)
-                            ssOverlappingBindings << "Binding layouts have overlapping register ranges:";
-
-                        ssOverlappingBindings << std::endl << utils::ShaderStageToString(stage) << ": ";
-
-                        bool first = true;
-                        auto append = [&first, &ssOverlappingBindings](bool value, const char* text)
-                        {
-                            if (value)
-                            {
-                                if (!first) ssOverlappingBindings << ", ";
-                                ssOverlappingBindings << text;
-                                first = false;
-                            }
-                        };
-
-                        append(overlapSRV, "SRV");
-                        append(overlapSampler, "Sampler");
-                        append(overlapUAV, "UAV");
-                        append(overlapCB, "CB");
-
-                        anyOverlappingBindings = true;
-                    }
-                }
+                }                
             }
         }
 

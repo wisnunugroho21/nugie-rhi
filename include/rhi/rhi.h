@@ -150,7 +150,6 @@ namespace rhi
 
     enum class GraphicsAPI : uint8_t
     {
-        D3D11,
         D3D12,
         VULKAN
     };
@@ -380,17 +379,12 @@ namespace rhi
     {
         None                = 0,
 
-        // D3D11: adds D3D11_RESOURCE_MISC_SHARED
         // D3D12: adds D3D12_HEAP_FLAG_SHARED
         // Vulkan: adds vk::ExternalMemoryImageCreateInfo and vk::ExportMemoryAllocateInfo/vk::ExternalMemoryBufferCreateInfo
         Shared              = 0x01,
 
-        // D3D11: adds (D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX | D3D11_RESOURCE_MISC_SHARED_NTHANDLE)
-        // D3D12, Vulkan: ignored
-        Shared_NTHandle     = 0x02,
-
         // D3D12: adds D3D12_RESOURCE_FLAG_ALLOW_CROSS_ADAPTER and D3D12_HEAP_FLAG_SHARED_CROSS_ADAPTER
-        // D3D11, Vulkan: ignored
+        // Vulkan: ignored
         Shared_CrossAdapter = 0x04,
     };
 
@@ -961,7 +955,6 @@ namespace rhi
         float slopeScaledDepthBias = 0.f;
 
         // Extended rasterizer state supported by Maxwell
-        // In D3D11, use NvAPI_D3D11_CreateRasterizerState to create such rasterizer state.
         uint8_t forcedSampleCount = 0;
         bool programmableSamplePositionsEnable = false;
         bool conservativeRasterEnable = false;
@@ -2666,8 +2659,7 @@ namespace rhi
         
         virtual SamplerHandle createSampler(const SamplerDesc& d) = 0;
 
-        // Note: vertexShader is only necessary on D3D11, otherwise it may be null
-        virtual InputLayoutHandle createInputLayout(const VertexAttributeDesc* d, uint32_t attributeCount, IShader* vertexShader) = 0;
+        virtual InputLayoutHandle createInputLayout(const VertexAttributeDesc* d, uint32_t attributeCount) = 0;
         
         // Event queries
         virtual EventQueryHandle createEventQuery() = 0;

@@ -1090,7 +1090,7 @@ namespace rhi::vulkan
 
         SamplerHandle createSampler(const SamplerDesc& d) override;
 
-        InputLayoutHandle createInputLayout(const VertexAttributeDesc* d, uint32_t attributeCount, IShader* vertexShader) override;
+        InputLayoutHandle createInputLayout(const VertexAttributeDesc* d, uint32_t attributeCount) override;
 
         // event queries
         EventQueryHandle createEventQuery() override;

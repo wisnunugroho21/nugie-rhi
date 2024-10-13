@@ -110,4 +110,4 @@ namespace rhi
         return info;
     }
 
-} // namespace rhi::d3d11
+} // namespace rhi
