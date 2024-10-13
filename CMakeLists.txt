@@ -55,7 +55,7 @@ endif()
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 if (RHI_WITH_VULKAN AND NOT TARGET Vulkan-Headers AND NOT TARGET Vulkan::Headers)
-    add_subdirectory(thirdparty/Vulkan-Headers)
+    add_subdirectory(libs/Vulkan-Headers)
 endif()
 
 if (RHI_WITH_RTXMU)
@@ -68,7 +68,7 @@ if (RHI_WITH_RTXMU)
     option(RTXMU_WITH_VULKAN "" ${RHI_WITH_VULKAN})
     option(RTXMU_WITH_D3D12 "" ${RHI_WITH_DX12})
 
-    add_subdirectory(rtxmu)
+    add_subdirectory(libs/rtxmu)
 endif()
 
 if (RHI_WITH_NVAPI AND NOT TARGET nvapi)
