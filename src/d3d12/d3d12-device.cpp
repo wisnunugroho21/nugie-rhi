@@ -22,16 +22,16 @@
 
 #include "d3d12-backend.h"
 
-#include <nvrhi/common/misc.h>
+#include <rhi/common/misc.h>
 
-#if NVRHI_D3D12_WITH_NVAPI
+#if RHI_D3D12_WITH_NVAPI
 #include <nvShaderExtnEnums.h>
 #endif
 
 #include <sstream>
 #include <iomanip>
 
-namespace nvrhi::d3d12
+namespace rhi::d3d12
 {
     void Context::error(const std::string& message) const
     {
@@ -112,7 +112,7 @@ namespace nvrhi::d3d12
             m_RayTracingSupported = m_Options5.RaytracingTier >= D3D12_RAYTRACING_TIER_1_0;
             m_TraceRayInlineSupported = m_Options5.RaytracingTier >= D3D12_RAYTRACING_TIER_1_1;
 
-#ifdef NVRHI_WITH_RTXMU
+#ifdef RHI_WITH_RTXMU
             if (m_RayTracingSupported)
             {
                 m_Context.rtxMemUtil = std::make_unique<rtxmu::DxAccelStructManager>(m_Context.device5);
@@ -156,7 +156,7 @@ namespace nvrhi::d3d12
 
         m_CommandListsToExecute.reserve(64);
 
-#if NVRHI_D3D12_WITH_NVAPI
+#if RHI_D3D12_WITH_NVAPI
         //We need to use NVAPI to set resource hints for SLI
         m_NvapiIsInitialized = NvAPI_Initialize() == NVAPI_OK;
 
@@ -185,8 +185,8 @@ namespace nvrhi::d3d12
             }
         }
 
-#if NVRHI_WITH_NVAPI_OPACITY_MICROMAP
-#ifdef NVRHI_WITH_RTXMU
+#if RHI_WITH_NVAPI_OPACITY_MICROMAP
+#ifdef RHI_WITH_RTXMU
         m_OpacityMicromapSupported = false; // RTXMU does not support OMMs
 #else
         if (m_NvapiIsInitialized)
@@ -205,11 +205,11 @@ namespace nvrhi::d3d12
             assert(res == NVAPI_OK);
         }
 #endif
-#endif // #if NVRHI_WITH_NVAPI_OPACITY_MICROMAPS
+#endif // #if RHI_WITH_NVAPI_OPACITY_MICROMAPS
 
-#endif // #if NVRHI_D3D12_WITH_NVAPI
+#endif // #if RHI_D3D12_WITH_NVAPI
 
-#if NVRHI_WITH_AFTERMATH
+#if RHI_WITH_AFTERMATH
         if (desc.aftermathEnabled)
         {
             const uint32_t aftermathFlags = GFSDK_Aftermath_FeatureFlags_EnableMarkers | GFSDK_Aftermath_FeatureFlags_EnableResourceTracking | GFSDK_Aftermath_FeatureFlags_GenerateShaderDebugInfo | GFSDK_Aftermath_FeatureFlags_EnableShaderErrorReporting;
@@ -333,7 +333,7 @@ namespace nvrhi::d3d12
         }
     }
 
-    nvrhi::CommandListHandle Device::createCommandList(const CommandListParameters& params)
+    rhi::CommandListHandle Device::createCommandList(const CommandListParameters& params)
     {
         if (!getQueue(params.queueType))
             return nullptr;
@@ -341,7 +341,7 @@ namespace nvrhi::d3d12
         return CommandListHandle::Create(new CommandList(this, m_Context, m_Resources, params));
     }
     
-    uint64_t Device::executeCommandLists(nvrhi::ICommandList* const* pCommandLists, size_t numCommandLists, CommandQueue executionQueue)
+    uint64_t Device::executeCommandLists(rhi::ICommandList* const* pCommandLists, size_t numCommandLists, CommandQueue executionQueue)
     {
         m_CommandListsToExecute.resize(numCommandLists);
         for (size_t i = 0; i < numCommandLists; i++)
@@ -396,7 +396,7 @@ namespace nvrhi::d3d12
                 
                 if (pQueue->lastCompletedInstance >= instance->submittedInstance)
                 {
-#ifdef NVRHI_WITH_RTXMU
+#ifdef RHI_WITH_RTXMU
                     if (!instance->rtxmuBuildIds.empty())
                     {
                         std::lock_guard lockGuard(m_Resources.asListMutex);
@@ -559,7 +559,7 @@ namespace nvrhi::d3d12
         heapDesc.Alignment = D3D12_DEFAULT_MSAA_RESOURCE_PLACEMENT_ALIGNMENT;
         heapDesc.Properties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
         heapDesc.Properties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-        heapDesc.Properties.CreationNodeMask = 1; // no mGPU support in nvrhi so far
+        heapDesc.Properties.CreationNodeMask = 1; // no mGPU support in rhi so far
         heapDesc.Properties.VisibleNodeMask = 1;
 
         if (m_Options.ResourceHeapTier == D3D12_RESOURCE_HEAP_TIER_1)
@@ -608,4 +608,4 @@ namespace nvrhi::d3d12
         return HeapHandle::Create(heap);
     }
 
-} // namespace nvrhi::d3d12
+} // namespace rhi::d3d12

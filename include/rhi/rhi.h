@@ -22,8 +22,8 @@
 
 #pragma once
 
-#include <nvrhi/common/containers.h>
-#include <nvrhi/common/resource.h>
+#include <rhi/common/containers.h>
+#include <rhi/common/resource.h>
 
 #include <cstdint>
 #include <cmath>
@@ -31,7 +31,7 @@
 #include <string>
 #include <vector>
 
-#define NVRHI_ENUM_CLASS_FLAG_OPERATORS(T) \
+#define RHI_ENUM_CLASS_FLAG_OPERATORS(T) \
     inline T operator | (T a, T b) { return T(uint32_t(a) | uint32_t(b)); } \
     inline T operator & (T a, T b) { return T(uint32_t(a) & uint32_t(b)); } /* NOLINT(bugprone-macro-parentheses) */ \
     inline T operator ~ (T a) { return T(~uint32_t(a)); } /* NOLINT(bugprone-macro-parentheses) */ \
@@ -39,34 +39,34 @@
     inline bool operator ==(T a, uint32_t b) { return uint32_t(a) == b; } \
     inline bool operator !=(T a, uint32_t b) { return uint32_t(a) != b; }
 
-#if defined(NVRHI_SHARED_LIBRARY_BUILD)
+#if defined(RHI_SHARED_LIBRARY_BUILD)
 #   if defined(_MSC_VER)
-#       define NVRHI_API __declspec(dllexport)
+#       define RHI_API __declspec(dllexport)
 #   elif defined(__GNUC__)
-#       define NVRHI_API __attribute__((visibility("default")))
+#       define RHI_API __attribute__((visibility("default")))
 #   else
-#       define NVRHI_API
+#       define RHI_API
 #       pragma warning "Unknown dynamic link import/export semantics."
 #   endif
-#elif defined(NVRHI_SHARED_LIBRARY_INCLUDE)
+#elif defined(RHI_SHARED_LIBRARY_INCLUDE)
 #   if defined(_MSC_VER)
-#       define NVRHI_API __declspec(dllimport)
+#       define RHI_API __declspec(dllimport)
 #   else
-#       define NVRHI_API
+#       define RHI_API
 #   endif
 #else
-#   define NVRHI_API
+#   define RHI_API
 #endif
 
-namespace nvrhi
+namespace rhi
 {
-    // Version of the public API provided by NVRHI.
+    // Version of the public API provided by RHI.
     // Increment this when any changes to the API are made.
     static constexpr uint32_t c_HeaderVersion = 14;
 
     // Verifies that the version of the implementation matches the version of the header.
-    // Returns true if they match. Use this when initializing apps using NVRHI as a shared library.
-    NVRHI_API bool verifyHeaderVersion(uint32_t version = c_HeaderVersion);
+    // Returns true if they match. Use this when initializing apps using RHI as a shared library.
+    RHI_API bool verifyHeaderVersion(uint32_t version = c_HeaderVersion);
 
     static constexpr uint32_t c_MaxRenderTargets = 8;
     static constexpr uint32_t c_MaxViewports = 16;
@@ -257,7 +257,7 @@ namespace nvrhi
         bool isSRGB : 1;
     };
 
-    NVRHI_API const FormatInfo& getFormatInfo(Format format);
+    RHI_API const FormatInfo& getFormatInfo(Format format);
 
     enum class FormatSupport : uint32_t
     {
@@ -279,7 +279,7 @@ namespace nvrhi
         ShaderAtomic    = 0x00000800,
     };
 
-    NVRHI_ENUM_CLASS_FLAG_OPERATORS(FormatSupport)
+    RHI_ENUM_CLASS_FLAG_OPERATORS(FormatSupport)
 
     //////////////////////////////////////////////////////////////////////////
     // Heap
@@ -370,7 +370,7 @@ namespace nvrhi
         OpacityMicromapBuildInput   = 0x00400000,
     };
 
-    NVRHI_ENUM_CLASS_FLAG_OPERATORS(ResourceStates)
+    RHI_ENUM_CLASS_FLAG_OPERATORS(ResourceStates)
 
     typedef uint32_t MipLevel;
     typedef uint32_t ArraySlice;
@@ -394,7 +394,7 @@ namespace nvrhi
         Shared_CrossAdapter = 0x04,
     };
 
-    NVRHI_ENUM_CLASS_FLAG_OPERATORS(SharedResourceFlags)
+    RHI_ENUM_CLASS_FLAG_OPERATORS(SharedResourceFlags)
 
     struct TextureDesc
     {
@@ -468,7 +468,7 @@ namespace nvrhi
         MipLevel mipLevel = 0;
         ArraySlice arraySlice = 0;
 
-        [[nodiscard]] NVRHI_API TextureSlice resolve(const TextureDesc& desc) const;
+        [[nodiscard]] RHI_API TextureSlice resolve(const TextureDesc& desc) const;
 
         constexpr TextureSlice& setOrigin(uint32_t vx = 0, uint32_t vy = 0, uint32_t vz = 0) { x = vx; y = vy; z = vz; return *this; }
         constexpr TextureSlice& setWidth(uint32_t value) { width = value; return *this; }
@@ -499,8 +499,8 @@ namespace nvrhi
         {
         }
 
-        [[nodiscard]] NVRHI_API TextureSubresourceSet resolve(const TextureDesc& desc, bool singleMipLevel) const;
-        [[nodiscard]] NVRHI_API bool isEntireTexture(const TextureDesc& desc) const;
+        [[nodiscard]] RHI_API TextureSubresourceSet resolve(const TextureDesc& desc, bool singleMipLevel) const;
+        [[nodiscard]] RHI_API bool isEntireTexture(const TextureDesc& desc) const;
 
         bool operator ==(const TextureSubresourceSet& other) const
         {
@@ -647,7 +647,7 @@ namespace nvrhi
             , byteSize(_byteSize)
         { }
 
-        [[nodiscard]] NVRHI_API BufferRange resolve(const BufferDesc& desc) const;
+        [[nodiscard]] RHI_API BufferRange resolve(const BufferDesc& desc) const;
         [[nodiscard]] constexpr bool isEntireBuffer(const BufferDesc& desc) const { return (byteOffset == 0) && (byteSize == ~0ull || byteSize == desc.byteSize); }
         constexpr bool operator== (const BufferRange& other) const { return byteOffset == other.byteOffset && byteSize == other.byteSize; }
 
@@ -696,7 +696,7 @@ namespace nvrhi
         All             = 0x3FFF,
     };
 
-    NVRHI_ENUM_CLASS_FLAG_OPERATORS(ShaderType)
+    RHI_ENUM_CLASS_FLAG_OPERATORS(ShaderType)
 
     enum class FastGeometryShaderFlags : uint8_t
     {
@@ -706,7 +706,7 @@ namespace nvrhi
         StrictApiOrder                   = 0x08
     };
 
-    NVRHI_ENUM_CLASS_FLAG_OPERATORS(FastGeometryShaderFlags)
+    RHI_ENUM_CLASS_FLAG_OPERATORS(FastGeometryShaderFlags)
 
     struct CustomSemantic
     {
@@ -850,7 +850,7 @@ namespace nvrhi
         All = 0xF
     };
 
-    NVRHI_ENUM_CLASS_FLAG_OPERATORS(ColorMask)
+    RHI_ENUM_CLASS_FLAG_OPERATORS(ColorMask)
 
     struct BlendState
     {
@@ -876,7 +876,7 @@ namespace nvrhi
             constexpr RenderTarget& setBlendOpAlpha(BlendOp value) { blendOpAlpha = value; return *this; }
             constexpr RenderTarget& setColorWriteMask(ColorMask value) { colorWriteMask = value; return *this; }
 
-            [[nodiscard]] NVRHI_API bool usesConstantColor() const;
+            [[nodiscard]] RHI_API bool usesConstantColor() const;
 
             constexpr bool operator ==(const RenderTarget& other) const
             {
@@ -1211,7 +1211,7 @@ namespace nvrhi
         uint32_t sampleQuality = 0;
 
         FramebufferInfo() = default;
-        NVRHI_API FramebufferInfo(const FramebufferDesc& desc);
+        RHI_API FramebufferInfo(const FramebufferDesc& desc);
         
         bool operator==(const FramebufferInfo& other) const
         {
@@ -1240,7 +1240,7 @@ namespace nvrhi
         uint32_t height = 0;
 
         FramebufferInfoEx() = default;
-        NVRHI_API FramebufferInfoEx(const FramebufferDesc& desc);
+        RHI_API FramebufferInfoEx(const FramebufferDesc& desc);
 
         [[nodiscard]] Viewport getViewport(float minZ = 0.f, float maxZ = 1.f) const
         {
@@ -1276,7 +1276,7 @@ namespace nvrhi
             FastBuild = 2,
         };
 
-        NVRHI_ENUM_CLASS_FLAG_OPERATORS(OpacityMicromapBuildFlags)
+        RHI_ENUM_CLASS_FLAG_OPERATORS(OpacityMicromapBuildFlags)
 
         struct OpacityMicromapUsageCount
         {
@@ -1353,7 +1353,7 @@ namespace nvrhi
             NoDuplicateAnyHitInvocation = 2
         };
 
-        NVRHI_ENUM_CLASS_FLAG_OPERATORS(GeometryFlags)
+        RHI_ENUM_CLASS_FLAG_OPERATORS(GeometryFlags)
 
         enum class GeometryType : uint8_t
         {
@@ -1453,7 +1453,7 @@ namespace nvrhi
             DisableOMMs = 32,
         };
 
-        NVRHI_ENUM_CLASS_FLAG_OPERATORS(InstanceFlags)
+        RHI_ENUM_CLASS_FLAG_OPERATORS(InstanceFlags)
 
         struct InstanceDesc
         {
@@ -1497,13 +1497,13 @@ namespace nvrhi
             MinimizeMemory = 0x10,
             PerformUpdate = 0x20,
 
-            // Removes the errors or warnings that NVRHI validation layer issues when a TLAS
+            // Removes the errors or warnings that RHI validation layer issues when a TLAS
             // includes an instance that points at a NULL BLAS or has a zero instance mask.
             // Only affects the validation layer, doesn't translate to Vk/DX12 AS build flags.
             AllowEmptyInstances = 0x80
         };
 
-        NVRHI_ENUM_CLASS_FLAG_OPERATORS(AccelStructBuildFlags)
+        RHI_ENUM_CLASS_FLAG_OPERATORS(AccelStructBuildFlags)
 
         struct AccelStructDesc
         {
@@ -1582,25 +1582,25 @@ namespace nvrhi
 
 
         // Helper functions for strongly typed initialization
-#define NVRHI_BINDING_LAYOUT_ITEM_INITIALIZER(TYPE) /* NOLINT(cppcoreguidelines-macro-usage) */ \
+#define RHI_BINDING_LAYOUT_ITEM_INITIALIZER(TYPE) /* NOLINT(cppcoreguidelines-macro-usage) */ \
         static BindingLayoutItem TYPE(const uint32_t slot) { \
             BindingLayoutItem result{}; \
             result.slot = slot; \
             result.type = ResourceType::TYPE; \
             return result; }
 
-        NVRHI_BINDING_LAYOUT_ITEM_INITIALIZER(Texture_SRV)
-        NVRHI_BINDING_LAYOUT_ITEM_INITIALIZER(Texture_UAV)
-        NVRHI_BINDING_LAYOUT_ITEM_INITIALIZER(TypedBuffer_SRV)
-        NVRHI_BINDING_LAYOUT_ITEM_INITIALIZER(TypedBuffer_UAV)
-        NVRHI_BINDING_LAYOUT_ITEM_INITIALIZER(StructuredBuffer_SRV)
-        NVRHI_BINDING_LAYOUT_ITEM_INITIALIZER(StructuredBuffer_UAV)
-        NVRHI_BINDING_LAYOUT_ITEM_INITIALIZER(RawBuffer_SRV)
-        NVRHI_BINDING_LAYOUT_ITEM_INITIALIZER(RawBuffer_UAV)
-        NVRHI_BINDING_LAYOUT_ITEM_INITIALIZER(ConstantBuffer)
-        NVRHI_BINDING_LAYOUT_ITEM_INITIALIZER(VolatileConstantBuffer)
-        NVRHI_BINDING_LAYOUT_ITEM_INITIALIZER(Sampler)
-        NVRHI_BINDING_LAYOUT_ITEM_INITIALIZER(RayTracingAccelStruct)
+        RHI_BINDING_LAYOUT_ITEM_INITIALIZER(Texture_SRV)
+        RHI_BINDING_LAYOUT_ITEM_INITIALIZER(Texture_UAV)
+        RHI_BINDING_LAYOUT_ITEM_INITIALIZER(TypedBuffer_SRV)
+        RHI_BINDING_LAYOUT_ITEM_INITIALIZER(TypedBuffer_UAV)
+        RHI_BINDING_LAYOUT_ITEM_INITIALIZER(StructuredBuffer_SRV)
+        RHI_BINDING_LAYOUT_ITEM_INITIALIZER(StructuredBuffer_UAV)
+        RHI_BINDING_LAYOUT_ITEM_INITIALIZER(RawBuffer_SRV)
+        RHI_BINDING_LAYOUT_ITEM_INITIALIZER(RawBuffer_UAV)
+        RHI_BINDING_LAYOUT_ITEM_INITIALIZER(ConstantBuffer)
+        RHI_BINDING_LAYOUT_ITEM_INITIALIZER(VolatileConstantBuffer)
+        RHI_BINDING_LAYOUT_ITEM_INITIALIZER(Sampler)
+        RHI_BINDING_LAYOUT_ITEM_INITIALIZER(RayTracingAccelStruct)
 
         static BindingLayoutItem PushConstants(const uint32_t slot, const size_t size)
         {
@@ -1610,7 +1610,7 @@ namespace nvrhi
             result.size = uint16_t(size);
             return result;
         }
-#undef NVRHI_BINDING_LAYOUT_ITEM_INITIALIZER
+#undef RHI_BINDING_LAYOUT_ITEM_INITIALIZER
     };
 
     // verify the packing of BindingLayoutItem for good alignment
@@ -1936,7 +1936,7 @@ namespace nvrhi
     {
         BindingSetItemArray bindings;
        
-        // Enables automatic liveness tracking of this binding set by nvrhi command lists.
+        // Enables automatic liveness tracking of this binding set by rhi command lists.
         // By setting trackLiveness to false, you take the responsibility of not releasing it 
         // until all rendering commands using the binding set are finished.
         bool trackLiveness = true;
@@ -2481,7 +2481,7 @@ namespace nvrhi
         virtual ~IMessageCallback() = default;
 
     public:
-        // NVRHI will call message(...) whenever it needs to signal something.
+        // RHI will call message(...) whenever it needs to signal something.
         // The application is free to ignore the messages, show message boxes, or terminate.
         virtual void message(MessageSeverity severity, const char* messageText) = 0;
 
@@ -2576,8 +2576,8 @@ namespace nvrhi
 
         // A version of buildTopLevelAccelStruct that takes the instance data from a buffer on the GPU.
         // The buffer must be pre-filled with rt::InstanceDesc structures using a copy operation or a shader.
-        // No validation on the buffer contents is performed by NVRHI, and no state or liveness tracking for the referenced BLAS'es.
-        virtual void buildTopLevelAccelStructFromBuffer(rt::IAccelStruct* as, nvrhi::IBuffer* instanceBuffer, uint64_t instanceBufferOffset, size_t numInstances,
+        // No validation on the buffer contents is performed by RHI, and no state or liveness tracking for the referenced BLAS'es.
+        virtual void buildTopLevelAccelStructFromBuffer(rt::IAccelStruct* as, rhi::IBuffer* instanceBuffer, uint64_t instanceBufferOffset, size_t numInstances,
             rt::AccelStructBuildFlags buildFlags = rt::AccelStructBuildFlags::None) = 0;
 
         virtual void beginTimerQuery(ITimerQuery* query) = 0;
@@ -2596,7 +2596,7 @@ namespace nvrhi
         virtual void setResourceStatesForBindingSet(IBindingSet* bindingSet) = 0;
         
         // Sets the necessary resource states for all targets of the framebuffer.
-        NVRHI_API void setResourceStatesForFramebuffer(IFramebuffer* framebuffer);
+        RHI_API void setResourceStatesForFramebuffer(IFramebuffer* framebuffer);
 
         // Tells the D3D12/VK backend whether UAV barriers should be used for the given texture or buffer between draw calls.
         // A barrier should still be placed before the first draw call in the group and after the last one.
@@ -2748,62 +2748,62 @@ namespace nvrhi
     }
 }
 
-#undef NVRHI_ENUM_CLASS_FLAG_OPERATORS
+#undef RHI_ENUM_CLASS_FLAG_OPERATORS
 
 namespace std
 {
-    template<typename T> struct hash<nvrhi::RefCountPtr<T>>
+    template<typename T> struct hash<rhi::RefCountPtr<T>>
     {
-        std::size_t operator()(nvrhi::RefCountPtr<T> const& s) const noexcept
+        std::size_t operator()(rhi::RefCountPtr<T> const& s) const noexcept
         {
             std::hash<T*> hash;
             return hash(s.Get());
         }
     };
 
-    template<> struct hash<nvrhi::TextureSubresourceSet>
+    template<> struct hash<rhi::TextureSubresourceSet>
     {
-        std::size_t operator()(nvrhi::TextureSubresourceSet const& s) const noexcept
+        std::size_t operator()(rhi::TextureSubresourceSet const& s) const noexcept
         {
             size_t hash = 0;
-            nvrhi::hash_combine(hash, s.baseMipLevel);
-            nvrhi::hash_combine(hash, s.numMipLevels);
-            nvrhi::hash_combine(hash, s.baseArraySlice);
-            nvrhi::hash_combine(hash, s.numArraySlices);
+            rhi::hash_combine(hash, s.baseMipLevel);
+            rhi::hash_combine(hash, s.numMipLevels);
+            rhi::hash_combine(hash, s.baseArraySlice);
+            rhi::hash_combine(hash, s.numArraySlices);
             return hash;
         }
     };
 
-    template<> struct hash<nvrhi::BufferRange>
+    template<> struct hash<rhi::BufferRange>
     {
-        std::size_t operator()(nvrhi::BufferRange const& s) const noexcept
+        std::size_t operator()(rhi::BufferRange const& s) const noexcept
         {
             size_t hash = 0;
-            nvrhi::hash_combine(hash, s.byteOffset);
-            nvrhi::hash_combine(hash, s.byteSize);
+            rhi::hash_combine(hash, s.byteOffset);
+            rhi::hash_combine(hash, s.byteSize);
             return hash;
         }
     };
 
-    template<> struct hash<nvrhi::BindingSetItem>
+    template<> struct hash<rhi::BindingSetItem>
     {
-        std::size_t operator()(nvrhi::BindingSetItem const& s) const noexcept
+        std::size_t operator()(rhi::BindingSetItem const& s) const noexcept
         {
             size_t value = 0;
-            nvrhi::hash_combine(value, s.resourceHandle);
-            nvrhi::hash_combine(value, s.slot);
-            nvrhi::hash_combine(value, s.type);
-            nvrhi::hash_combine(value, s.dimension);
-            nvrhi::hash_combine(value, s.format);
-            nvrhi::hash_combine(value, s.rawData[0]);
-            nvrhi::hash_combine(value, s.rawData[1]);
+            rhi::hash_combine(value, s.resourceHandle);
+            rhi::hash_combine(value, s.slot);
+            rhi::hash_combine(value, s.type);
+            rhi::hash_combine(value, s.dimension);
+            rhi::hash_combine(value, s.format);
+            rhi::hash_combine(value, s.rawData[0]);
+            rhi::hash_combine(value, s.rawData[1]);
             return value;
         }
     };
 
-    template<> struct hash<nvrhi::BindingSetDesc>
+    template<> struct hash<rhi::BindingSetDesc>
     {
-        std::size_t operator()(nvrhi::BindingSetDesc const& s) const noexcept
+        std::size_t operator()(rhi::BindingSetDesc const& s) const noexcept
         {
             size_t value = 0;
             for (const auto& item : s.bindings)
@@ -2812,45 +2812,45 @@ namespace std
         }
     };
 
-    template<> struct hash<nvrhi::FramebufferInfo>
+    template<> struct hash<rhi::FramebufferInfo>
     {
-        std::size_t operator()(nvrhi::FramebufferInfo const& s) const noexcept
+        std::size_t operator()(rhi::FramebufferInfo const& s) const noexcept
         {
             size_t hash = 0;
             for (auto format : s.colorFormats)
-                nvrhi::hash_combine(hash, format);
-            nvrhi::hash_combine(hash, s.depthFormat);
-            nvrhi::hash_combine(hash, s.sampleCount);
-            nvrhi::hash_combine(hash, s.sampleQuality);
+                rhi::hash_combine(hash, format);
+            rhi::hash_combine(hash, s.depthFormat);
+            rhi::hash_combine(hash, s.sampleCount);
+            rhi::hash_combine(hash, s.sampleQuality);
             return hash;
         }
     };
 
-    template<> struct hash<nvrhi::BlendState::RenderTarget>
+    template<> struct hash<rhi::BlendState::RenderTarget>
     {
-        std::size_t operator()(nvrhi::BlendState::RenderTarget const& s) const noexcept
+        std::size_t operator()(rhi::BlendState::RenderTarget const& s) const noexcept
         {
             size_t hash = 0;
-            nvrhi::hash_combine(hash, s.blendEnable);
-            nvrhi::hash_combine(hash, s.srcBlend);
-            nvrhi::hash_combine(hash, s.destBlend);
-            nvrhi::hash_combine(hash, s.blendOp);
-            nvrhi::hash_combine(hash, s.srcBlendAlpha);
-            nvrhi::hash_combine(hash, s.destBlendAlpha);
-            nvrhi::hash_combine(hash, s.blendOpAlpha);
-            nvrhi::hash_combine(hash, s.colorWriteMask);
+            rhi::hash_combine(hash, s.blendEnable);
+            rhi::hash_combine(hash, s.srcBlend);
+            rhi::hash_combine(hash, s.destBlend);
+            rhi::hash_combine(hash, s.blendOp);
+            rhi::hash_combine(hash, s.srcBlendAlpha);
+            rhi::hash_combine(hash, s.destBlendAlpha);
+            rhi::hash_combine(hash, s.blendOpAlpha);
+            rhi::hash_combine(hash, s.colorWriteMask);
             return hash;
         }
     };
 
-    template<> struct hash<nvrhi::BlendState>
+    template<> struct hash<rhi::BlendState>
     {
-        std::size_t operator()(nvrhi::BlendState const& s) const noexcept
+        std::size_t operator()(rhi::BlendState const& s) const noexcept
         {
             size_t hash = 0;
-            nvrhi::hash_combine(hash, s.alphaToCoverageEnable);
+            rhi::hash_combine(hash, s.alphaToCoverageEnable);
             for (const auto& target : s.targets)
-                nvrhi::hash_combine(hash, target);
+                rhi::hash_combine(hash, target);
             return hash;
         }
     };

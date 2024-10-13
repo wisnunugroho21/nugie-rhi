@@ -22,13 +22,13 @@
 
 #include "validation-backend.h"
 
-#include <nvrhi/common/misc.h>
-#include <nvrhi/utils.h>
+#include <rhi/common/misc.h>
+#include <rhi/utils.h>
 
 #include <sstream>
 
 
-namespace nvrhi::validation
+namespace rhi::validation
 {
 
     CommandListWrapper::CommandListWrapper(DeviceWrapper* device, ICommandList* commandList, bool isImmediate, CommandQueue queueType)
@@ -1641,7 +1641,7 @@ namespace nvrhi::validation
         m_CommandList->buildTopLevelAccelStruct(underlyingAS, patchedInstances.data(), uint32_t(patchedInstances.size()), buildFlags);
     }
 
-    void CommandListWrapper::buildTopLevelAccelStructFromBuffer(rt::IAccelStruct* as, nvrhi::IBuffer* instanceBuffer, uint64_t instanceBufferOffset, size_t numInstances, rt::AccelStructBuildFlags buildFlags)
+    void CommandListWrapper::buildTopLevelAccelStructFromBuffer(rt::IAccelStruct* as, rhi::IBuffer* instanceBuffer, uint64_t instanceBufferOffset, size_t numInstances, rt::AccelStructBuildFlags buildFlags)
     {
         if (!requireOpenState())
             return;
@@ -1696,7 +1696,7 @@ namespace nvrhi::validation
         m_CommandList->buildTopLevelAccelStructFromBuffer(underlyingAS, instanceBuffer, instanceBufferOffset, numInstances, buildFlags);
     }
 
-    void CommandListWrapper::evaluatePushConstantSize(const nvrhi::BindingLayoutVector& bindingLayouts)
+    void CommandListWrapper::evaluatePushConstantSize(const rhi::BindingLayoutVector& bindingLayouts)
     {
         m_PipelinePushConstantSize = 0;
 
@@ -1737,4 +1737,4 @@ namespace nvrhi::validation
         return true;
     }
     
-} // namespace nvrhi::validation
+} // namespace rhi::validation

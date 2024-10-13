@@ -22,11 +22,11 @@
 
 #include "d3d11-backend.h"
 
-#include <nvrhi/utils.h>
+#include <rhi/utils.h>
 #include <sstream>
 #include <iomanip>
 
-namespace nvrhi::d3d11
+namespace rhi::d3d11
 {
     void Context::error(const std::string& message) const
     {
@@ -51,7 +51,7 @@ namespace nvrhi::d3d11
         m_Context.immediateContext->QueryInterface(IID_PPV_ARGS(&m_Context.immediateContext1));
         desc.context->GetDevice(&m_Context.device);
 
-#if NVRHI_D3D11_WITH_NVAPI
+#if RHI_D3D11_WITH_NVAPI
         m_Context.nvapiAvailable = NvAPI_Initialize() == NVAPI_OK;
 
         if (m_Context.nvapiAvailable)
@@ -74,7 +74,7 @@ namespace nvrhi::d3d11
         }
 #endif
 
-#if NVRHI_WITH_AFTERMATH
+#if RHI_WITH_AFTERMATH
         if (desc.aftermathEnabled)
         {
             auto CheckAftermathResult = [this](GFSDK_Aftermath_Result result)
@@ -119,7 +119,7 @@ namespace nvrhi::d3d11
         // Release the command list so that it unregisters the Aftermath marker tracker before the device is destroyed
         m_ImmediateCommandList = nullptr;
 
-#if NVRHI_WITH_AFTERMATH
+#if RHI_WITH_AFTERMATH
         if (m_Context.aftermathContext)
         {
             GFSDK_Aftermath_ReleaseContextHandle(m_Context.aftermathContext);
@@ -186,7 +186,7 @@ namespace nvrhi::d3d11
         case Feature::FastGeometryShader:
             return m_FastGeometryShaderSupported;
         case Feature::ConservativeRasterization:
-#if NVRHI_D3D11_WITH_NVAPI
+#if RHI_D3D11_WITH_NVAPI
             return true;
 #else
             return false;
@@ -346,4 +346,4 @@ namespace nvrhi::d3d11
         return SamplerHandle::Create(sampler);
     }
 
-} // namespace nvrhi::d3d11
+} // namespace rhi::d3d11

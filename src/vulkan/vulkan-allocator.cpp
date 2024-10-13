@@ -22,7 +22,7 @@
 
 #include "vulkan-backend.h"
 
-namespace nvrhi::vulkan
+namespace rhi::vulkan
 {
 
     static vk::MemoryPropertyFlags pickBufferMemoryProperties(const BufferDesc& d)
@@ -167,4 +167,4 @@ namespace nvrhi::vulkan
         res->memory = vk::DeviceMemory(nullptr);
     }
 
-} // namespace nvrhi::vulkan
+} // namespace rhi::vulkan

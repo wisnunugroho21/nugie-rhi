@@ -22,9 +22,9 @@
 
 #include "d3d11-backend.h"
 
-#include <nvrhi/common/misc.h>
+#include <rhi/common/misc.h>
 
-namespace nvrhi::d3d11
+namespace rhi::d3d11
 {
 
     ComputePipelineHandle Device::createComputePipeline(const ComputePipelineDesc& desc)
@@ -87,4 +87,4 @@ namespace nvrhi::d3d11
         }
     }
 
-} // nanmespace nvrhi::d3d11
+} // nanmespace rhi::d3d11

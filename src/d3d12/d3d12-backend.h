@@ -22,35 +22,35 @@
 
 #pragma once
 
-#include <nvrhi/d3d12.h>
+#include <rhi/d3d12.h>
 
-#ifndef NVRHI_D3D12_WITH_NVAPI
-#define NVRHI_D3D12_WITH_NVAPI 0
+#ifndef RHI_D3D12_WITH_NVAPI
+#define RHI_D3D12_WITH_NVAPI 0
 #endif
 
-#if NVRHI_D3D12_WITH_NVAPI
+#if RHI_D3D12_WITH_NVAPI
 #include <dxgi.h>
 #include <nvapi.h>
 #endif
 
-#include <nvrhi/common/aftermath.h>
-#if NVRHI_WITH_AFTERMATH
+#include <rhi/common/aftermath.h>
+#if RHI_WITH_AFTERMATH
 #include <GFSDK_Aftermath.h>
 #endif
 
 // There's no version check available in the nvapi header,
 // instead to check if the NvAPI linked is OMM compatible version (>520) we look for one of the defines it adds...
-#if NVRHI_D3D12_WITH_NVAPI && defined(NVAPI_GET_RAYTRACING_OPACITY_MICROMAP_ARRAY_PREBUILD_INFO_PARAMS_VER)
-#define NVRHI_WITH_NVAPI_OPACITY_MICROMAP (1)
+#if RHI_D3D12_WITH_NVAPI && defined(NVAPI_GET_RAYTRACING_OPACITY_MICROMAP_ARRAY_PREBUILD_INFO_PARAMS_VER)
+#define RHI_WITH_NVAPI_OPACITY_MICROMAP (1)
 #else
-#define NVRHI_WITH_NVAPI_OPACITY_MICROMAP (0)
+#define RHI_WITH_NVAPI_OPACITY_MICROMAP (0)
 #endif
 
 // ... same for DMM compatible versions (>=535) we look for one of the defines it adds
-#if NVRHI_D3D12_WITH_NVAPI && defined(NVAPI_GET_RAYTRACING_DISPLACEMENT_MICROMAP_ARRAY_PREBUILD_INFO_PARAMS_VER)
-#define NVRHI_WITH_NVAPI_DISPLACEMENT_MICROMAP (1)
+#if RHI_D3D12_WITH_NVAPI && defined(NVAPI_GET_RAYTRACING_DISPLACEMENT_MICROMAP_ARRAY_PREBUILD_INFO_PARAMS_VER)
+#define RHI_WITH_NVAPI_DISPLACEMENT_MICROMAP (1)
 #else
-#define NVRHI_WITH_NVAPI_DISPLACEMENT_MICROMAP (0)
+#define RHI_WITH_NVAPI_DISPLACEMENT_MICROMAP (0)
 #endif
 
 #include <bitset>
@@ -61,17 +61,17 @@
 #include <unordered_map>
 #include <utility>
 
-#include <nvrhi/common/resourcebindingmap.h>
-#include <nvrhi/utils.h>
+#include <rhi/common/resourcebindingmap.h>
+#include <rhi/utils.h>
 #include "../common/state-tracking.h"
 #include "../common/dxgi-format.h"
 #include "../common/versioning.h"
 
-#ifdef NVRHI_WITH_RTXMU
+#ifdef RHI_WITH_RTXMU
 #include <rtxmu/D3D12AccelStructManager.h>
 #endif
 
-namespace nvrhi::d3d12
+namespace rhi::d3d12
 {
     class RootSignature;
     class Buffer;
@@ -106,7 +106,7 @@ namespace nvrhi::d3d12
         RefCountPtr<ID3D12Device> device;
         RefCountPtr<ID3D12Device2> device2;
         RefCountPtr<ID3D12Device5> device5;
-#ifdef NVRHI_WITH_RTXMU
+#ifdef RHI_WITH_RTXMU
         std::unique_ptr<rtxmu::DxAccelStructManager> rtxMemUtil;
 #endif
 
@@ -163,7 +163,7 @@ namespace nvrhi::d3d12
         StaticDescriptorHeap shaderResourceViewHeap;
         StaticDescriptorHeap samplerHeap;
         utils::BitSetAllocator timerQueries;
-#ifdef NVRHI_WITH_RTXMU
+#ifdef RHI_WITH_RTXMU
         std::mutex asListMutex;
         std::vector<uint64_t> asBuildsCompleted;
 #endif
@@ -186,7 +186,7 @@ namespace nvrhi::d3d12
     public:
         ShaderDesc desc;
         std::vector<char> bytecode;
-    #if NVRHI_D3D12_WITH_NVAPI
+    #if RHI_D3D12_WITH_NVAPI
         std::vector<NVAPI_D3D12_PSO_EXTENSION_DESC*> extensions;
         std::vector<NV_CUSTOM_SEMANTIC> customSemantics;
         std::vector<uint32_t> coordinateSwizzling;
@@ -704,7 +704,7 @@ namespace nvrhi::d3d12
         bool allowUpdate = false;
         bool compacted = false;
         size_t rtxmuId = ~0ull;
-#ifdef NVRHI_WITH_RTXMU
+#ifdef RHI_WITH_RTXMU
         D3D12_GPU_VIRTUAL_ADDRESS rtxmuGpuVA = 0;
 #endif
 
@@ -834,7 +834,7 @@ namespace nvrhi::d3d12
         RefCountPtr<ID3D12GraphicsCommandList4> commandList4;
         RefCountPtr<ID3D12GraphicsCommandList6> commandList6;
         uint64_t lastSubmittedInstance = 0;
-#if NVRHI_WITH_AFTERMATH
+#if RHI_WITH_AFTERMATH
         GFSDK_Aftermath_ContextHandle aftermathContext;
 #endif
     };
@@ -852,13 +852,13 @@ namespace nvrhi::d3d12
         std::vector<RefCountPtr<StagingTexture>> referencedStagingTextures;
         std::vector<RefCountPtr<Buffer>> referencedStagingBuffers;
         std::vector<RefCountPtr<TimerQuery>> referencedTimerQueries;
-#ifdef NVRHI_WITH_RTXMU
+#ifdef RHI_WITH_RTXMU
         std::vector<uint64_t> rtxmuBuildIds;
         std::vector<uint64_t> rtxmuCompactionIds;
 #endif
     };
 
-    class CommandList final : public RefCounter<nvrhi::d3d12::ICommandList>
+    class CommandList final : public RefCounter<rhi::d3d12::ICommandList>
     {
     public:
 
@@ -917,7 +917,7 @@ namespace nvrhi::d3d12
         void buildBottomLevelAccelStruct(rt::IAccelStruct* as, const rt::GeometryDesc* pGeometries, size_t numGeometries, rt::AccelStructBuildFlags buildFlags) override;
         void compactBottomLevelAccelStructs() override;
         void buildTopLevelAccelStruct(rt::IAccelStruct* as, const rt::InstanceDesc* pInstances, size_t numInstances, rt::AccelStructBuildFlags buildFlags) override;
-        void buildTopLevelAccelStructFromBuffer(rt::IAccelStruct* as, nvrhi::IBuffer* instanceBuffer, uint64_t instanceBufferOffset, size_t numInstances,
+        void buildTopLevelAccelStructFromBuffer(rt::IAccelStruct* as, rhi::IBuffer* instanceBuffer, uint64_t instanceBufferOffset, size_t numInstances,
             rt::AccelStructBuildFlags buildFlags = rt::AccelStructBuildFlags::None) override;
 
         void beginTimerQuery(ITimerQuery* query) override;
@@ -947,7 +947,7 @@ namespace nvrhi::d3d12
         ResourceStates getTextureSubresourceState(ITexture* texture, ArraySlice arraySlice, MipLevel mipLevel) override;
         ResourceStates getBufferState(IBuffer* buffer) override;
 
-        nvrhi::IDevice* getDevice() override;
+        rhi::IDevice* getDevice() override;
         const CommandListParameters& getDesc() override { return m_Desc; }
 
         // D3D12 specific methods
@@ -986,7 +986,7 @@ namespace nvrhi::d3d12
         std::list<std::shared_ptr<InternalCommandList>> m_CommandListPool;
         std::shared_ptr<CommandListInstance> m_Instance;
         uint64_t m_RecordingVersion = 0;
-#if NVRHI_WITH_AFTERMATH
+#if RHI_WITH_AFTERMATH
         AftermathMarkerTracker m_AftermathTracker;
 #endif
 
@@ -1111,8 +1111,8 @@ namespace nvrhi::d3d12
         MemoryRequirements getAccelStructMemoryRequirements(rt::IAccelStruct* as) override;
         bool bindAccelStructMemory(rt::IAccelStruct* as, IHeap* heap, uint64_t offset) override;
 
-        nvrhi::CommandListHandle createCommandList(const CommandListParameters& params = CommandListParameters()) override;
-        uint64_t executeCommandLists(nvrhi::ICommandList* const* pCommandLists, size_t numCommandLists, CommandQueue executionQueue = CommandQueue::Graphics) override;
+        rhi::CommandListHandle createCommandList(const CommandListParameters& params = CommandListParameters()) override;
+        uint64_t executeCommandLists(rhi::ICommandList* const* pCommandLists, size_t numCommandLists, CommandQueue executionQueue = CommandQueue::Graphics) override;
         void queueWaitForCommandList(CommandQueue waitQueue, CommandQueue executionQueue, uint64_t instance) override;
         bool waitForIdle() override;
         void runGarbageCollection() override;
@@ -1175,4 +1175,4 @@ namespace nvrhi::d3d12
     
     };
 
-} // namespace nvrhi::d3d12
+} // namespace rhi::d3d12

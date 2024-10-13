@@ -20,9 +20,9 @@
 * DEALINGS IN THE SOFTWARE.
 */
 
-#include <nvrhi/nvrhi.h>
+#include <rhi/rhi.h>
 
-namespace nvrhi
+namespace rhi
 {
     // Format mapping table. The rows must be in the exactly same order as Format enum members are defined.
     static const FormatInfo c_FormatInfo[] = {
@@ -110,4 +110,4 @@ namespace nvrhi
         return info;
     }
 
-} // namespace nvrhi::d3d11
+} // namespace rhi::d3d11

@@ -22,10 +22,10 @@
 
 #include "d3d12-backend.h"
 
-#include <nvrhi/common/misc.h>
+#include <rhi/common/misc.h>
 #include <sstream>
 
-namespace nvrhi::d3d12
+namespace rhi::d3d12
 {
     Object MeshletPipeline::getNativeObject(ObjectType objectType)
     {
@@ -40,7 +40,7 @@ namespace nvrhi::d3d12
         }
     }
 
-    nvrhi::RefCountPtr<ID3D12PipelineState> Device::createPipelineState(const MeshletPipelineDesc& state, RootSignature* pRS, const FramebufferInfo& fbinfo) const
+    rhi::RefCountPtr<ID3D12PipelineState> Device::createPipelineState(const MeshletPipelineDesc& state, RootSignature* pRS, const FramebufferInfo& fbinfo) const
     {
         RefCountPtr<ID3D12PipelineState> pipelineState;
 
@@ -164,7 +164,7 @@ namespace nvrhi::d3d12
         return createHandleForNativeMeshletPipeline(pRS, pPSO, desc, fb->getFramebufferInfo());
     }
 
-	nvrhi::MeshletPipelineHandle Device::createHandleForNativeMeshletPipeline(IRootSignature* rootSignature, ID3D12PipelineState* pipelineState, const MeshletPipelineDesc& desc, const FramebufferInfo& framebufferInfo)
+	rhi::MeshletPipelineHandle Device::createHandleForNativeMeshletPipeline(IRootSignature* rootSignature, ID3D12PipelineState* pipelineState, const MeshletPipelineDesc& desc, const FramebufferInfo& framebufferInfo)
     {
         if (rootSignature == nullptr)
             return nullptr;
@@ -300,4 +300,4 @@ namespace nvrhi::d3d12
 
         m_ActiveCommandList->commandList6->DispatchMesh(groupsX, groupsY, groupsZ);
     }
-} // namespace nvrhi::d3d12
+} // namespace rhi::d3d12

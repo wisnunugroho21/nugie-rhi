@@ -21,9 +21,9 @@
 */
 
 #include "vulkan-backend.h"
-#include <nvrhi/common/misc.h>
+#include <rhi/common/misc.h>
 
-namespace nvrhi::vulkan
+namespace rhi::vulkan
 {
 
     extern vk::ImageAspectFlags guessImageAspectFlags(vk::Format format);
@@ -264,4 +264,4 @@ namespace nvrhi::vulkan
                                       1, &imageCopy);
     }
 
-} // namespace nvrhi::vulkan
+} // namespace rhi::vulkan

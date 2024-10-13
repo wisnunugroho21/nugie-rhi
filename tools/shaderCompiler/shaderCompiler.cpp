@@ -31,8 +31,8 @@
 #include <thread>
 #include <mutex>
 #include <csignal>
-#include <nvrhi/common/shader-blob.h>
-#include <nvrhi/common/misc.h>
+#include <rhi/common/shader-blob.h>
+#include <rhi/common/misc.h>
 
 #if __has_include(<filesystem>)
 #include <filesystem>
@@ -266,7 +266,7 @@ bool processShaderConfig(uint32_t lineno, const string& shaderConfig)
 		combinedDefines << define << " ";
 	}
 
-	uint32_t permutationHash = nvrhi::hash_to_u32(std::hash<std::string>()(combinedDefines.str()));
+	uint32_t permutationHash = rhi::hash_to_u32(std::hash<std::string>()(combinedDefines.str()));
 
 	fs::path compiledShaderName;
 	if (compilerOptions.outputPath.empty())
@@ -466,7 +466,7 @@ bool WriteShaderBlob(const string& compiledShaderName, const vector<BlobEntry>& 
 			fs::remove(inputFileName);
 		}
 		
-		nvrhi::ShaderBlobEntry binaryEntry;
+		rhi::ShaderBlobEntry binaryEntry;
 		binaryEntry.permutationSize = (uint32_t)entry.permutation.size();
 		binaryEntry.dataSize = (uint32_t)fileSize;
 

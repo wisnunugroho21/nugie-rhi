@@ -22,12 +22,12 @@
 
 #include "d3d11-backend.h"
 
-#include <nvrhi/common/misc.h>
-#include <nvrhi/utils.h>
+#include <rhi/common/misc.h>
+#include <rhi/utils.h>
 #include <sstream>
 #include <iomanip>
 
-namespace nvrhi::d3d11
+namespace rhi::d3d11
 {
 
     FramebufferHandle Device::createFramebuffer(const FramebufferDesc& desc)
@@ -267,7 +267,7 @@ namespace nvrhi::d3d11
             }
         }
 
-#if NVRHI_D3D11_WITH_NVAPI
+#if RHI_D3D11_WITH_NVAPI
         bool updateSPS = m_CurrentSinglePassStereoState != pipeline->desc.renderState.singlePassStereo;
 
         if (updateSPS)
@@ -589,7 +589,7 @@ namespace nvrhi::d3d11
 
         if (extendedState)
         {
-#if NVRHI_D3D11_WITH_NVAPI
+#if RHI_D3D11_WITH_NVAPI
             NvAPI_D3D11_RASTERIZER_DESC_EX descEx;
             memset(&descEx, 0, sizeof(descEx));
             memcpy(&descEx, &desc11New, sizeof(desc11New));
@@ -630,4 +630,4 @@ namespace nvrhi::d3d11
     }
 
 
-} // nanmespace nvrhi::d3d11
+} // nanmespace rhi::d3d11

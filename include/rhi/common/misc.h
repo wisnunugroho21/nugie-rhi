@@ -25,7 +25,7 @@
 #include <cstdint>
 #include <cassert>
 
-namespace nvrhi 
+namespace rhi 
 {
     template<typename T> T align(T size, T alignment)
     {
@@ -84,4 +84,4 @@ namespace nvrhi
         return static_cast<T>(u);
 #endif
     }
-} // namespace nvrhi
+} // namespace rhi

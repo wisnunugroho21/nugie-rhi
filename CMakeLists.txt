@@ -22,27 +22,27 @@
 
 cmake_minimum_required(VERSION 3.10)
 
-project(nvrhi VERSION 1.0.0)
+project(rhi VERSION 1.0.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(CMakeDependentOption)
 
-option(NVRHI_BUILD_SHARED "Build NVRHI as a shared library (DLL or .so)" OFF)
-option(NVRHI_INSTALL "Generate install rules for NVRHI" ON)
-cmake_dependent_option(NVRHI_INSTALL_EXPORTS "Install CMake exports" OFF "NVRHI_INSTALL" OFF)
+option(RHI_BUILD_SHARED "Build RHI as a shared library (DLL or .so)" OFF)
+option(RHI_INSTALL "Generate install rules for RHI" ON)
+cmake_dependent_option(RHI_INSTALL_EXPORTS "Install CMake exports" OFF "RHI_INSTALL" OFF)
 
-option(NVRHI_WITH_VALIDATION "Build NVRHI the validation layer" ON)
-option(NVRHI_WITH_VULKAN "Build the NVRHI Vulkan backend" ON)
-option(NVRHI_WITH_RTXMU "Use RTXMU for acceleration structure management" OFF)
-option(NVRHI_WITH_AFTERMATH "Include Aftermath support (requires NSight Aftermath SDK)" OFF)
+option(RHI_WITH_VALIDATION "Build RHI the validation layer" ON)
+option(RHI_WITH_VULKAN "Build the RHI Vulkan backend" ON)
+option(RHI_WITH_RTXMU "Use RTXMU for acceleration structure management" OFF)
+option(RHI_WITH_AFTERMATH "Include Aftermath support (requires NSight Aftermath SDK)" OFF)
 
-cmake_dependent_option(NVRHI_WITH_NVAPI "Include NVAPI support (requires NVAPI SDK)" OFF "WIN32" OFF)
-cmake_dependent_option(NVRHI_WITH_DX11 "Build the NVRHI D3D11 backend" ON "WIN32" OFF)
-cmake_dependent_option(NVRHI_WITH_DX12 "Build the NVRHI D3D12 backend" ON "WIN32" OFF)
+cmake_dependent_option(RHI_WITH_NVAPI "Include NVAPI support (requires NVAPI SDK)" OFF "WIN32" OFF)
+cmake_dependent_option(RHI_WITH_DX11 "Build the RHI D3D11 backend" ON "WIN32" OFF)
+cmake_dependent_option(RHI_WITH_DX12 "Build the RHI D3D12 backend" ON "WIN32" OFF)
 
-if (NVRHI_BUILD_SHARED)
+if (RHI_BUILD_SHARED)
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
@@ -54,24 +54,24 @@ endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-if (NVRHI_WITH_VULKAN AND NOT TARGET Vulkan-Headers AND NOT TARGET Vulkan::Headers)
+if (RHI_WITH_VULKAN AND NOT TARGET Vulkan-Headers AND NOT TARGET Vulkan::Headers)
     add_subdirectory(thirdparty/Vulkan-Headers)
 endif()
 
-if (NVRHI_WITH_RTXMU)
+if (RHI_WITH_RTXMU)
     if (TARGET Vulkan-Headers)
         get_target_property(RTXMU_VULKAN_INCLUDE_DIR Vulkan-Headers INTERFACE_INCLUDE_DIRECTORIES)
     elseif (TARGET Vulkan::Headers)
         get_target_property(RTXMU_VULKAN_INCLUDE_DIR Vulkan::Headers INTERFACE_INCLUDE_DIRECTORIES)
     endif()
 
-    option(RTXMU_WITH_VULKAN "" ${NVRHI_WITH_VULKAN})
-    option(RTXMU_WITH_D3D12 "" ${NVRHI_WITH_DX12})
+    option(RTXMU_WITH_VULKAN "" ${RHI_WITH_VULKAN})
+    option(RTXMU_WITH_D3D12 "" ${RHI_WITH_DX12})
 
     add_subdirectory(rtxmu)
 endif()
 
-if (NVRHI_WITH_NVAPI AND NOT TARGET nvapi)
+if (RHI_WITH_NVAPI AND NOT TARGET nvapi)
     find_package(NVAPI REQUIRED)
 
     if (NVAPI_FOUND)
@@ -81,7 +81,7 @@ if (NVRHI_WITH_NVAPI AND NOT TARGET nvapi)
     endif()
 endif()
 
-if (NVRHI_WITH_AFTERMATH AND NOT TARGET aftermath)
+if (RHI_WITH_AFTERMATH AND NOT TARGET aftermath)
     find_package(Aftermath REQUIRED)
 
     if (AFTERMATH_FOUND)
@@ -93,17 +93,17 @@ if (NVRHI_WITH_AFTERMATH AND NOT TARGET aftermath)
         set_property(TARGET aftermath PROPERTY IMPORTED_LOCATION "${AFTERMATH_RUNTIME_LIBRARY}")
         file(COPY ${AFTERMATH_RUNTIME_LIBRARY} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     else()
-        message(FATAL_ERROR "NVRHI_WITH_AFTERMATH is enabled but cmake cannot find the Aftermath SDK in AFTERMATH_SEARCH_PATHS")
+        message(FATAL_ERROR "RHI_WITH_AFTERMATH is enabled but cmake cannot find the Aftermath SDK in AFTERMATH_SEARCH_PATHS")
     endif()
 endif()
 
 set(include_common
-    include/nvrhi/nvrhi.h
-    include/nvrhi/utils.h
-    include/nvrhi/common/containers.h
-    include/nvrhi/common/misc.h
-    include/nvrhi/common/resource.h
-    include/nvrhi/common/aftermath.h)
+    include/rhi/rhi.h
+    include/rhi/utils.h
+    include/rhi/common/containers.h
+    include/rhi/common/misc.h
+    include/rhi/common/resource.h
+    include/rhi/common/aftermath.h)
 set(src_common
     src/common/format-info.cpp
     src/common/misc.cpp
@@ -114,13 +114,13 @@ set(src_common
 
 if(MSVC)
     set(misc_common 
-        tools/nvrhi.natvis)
+        tools/rhi.natvis)
 else()
     set(misc_common "")
 endif()
 
 set(include_validation
-    include/nvrhi/validation.h)
+    include/rhi/validation.h)
 set(src_validation
     src/validation/validation-commandlist.cpp
     src/validation/validation-device.cpp
@@ -129,7 +129,7 @@ set(src_validation
     src/common/sparse-bitset.cpp)
 
 set(include_d3d11
-    include/nvrhi/d3d11.h)
+    include/rhi/d3d11.h)
 set(src_d3d11
     src/common/dxgi-format.h
     src/common/dxgi-format.cpp
@@ -146,7 +146,7 @@ set(src_d3d11
     src/d3d11/d3d11-texture.cpp)
 
 set(include_d3d12
-    include/nvrhi/d3d12.h)
+    include/rhi/d3d12.h)
 set(src_d3d12
     src/common/dxgi-format.h
     src/common/dxgi-format.cpp
@@ -169,7 +169,7 @@ set(src_d3d12
     src/d3d12/d3d12-upload.cpp)
 
 set(include_vk
-    include/nvrhi/vulkan.h)
+    include/rhi/vulkan.h)
 set(src_vk
     src/common/versioning.h
     src/vulkan/vulkan-allocator.cpp
@@ -191,201 +191,201 @@ set(src_vk
     src/vulkan/vulkan-upload.cpp
     src/vulkan/vulkan-backend.h)
 
-# NVRHI interface and common implementation functions
+# RHI interface and common implementation functions
 
-if (NVRHI_BUILD_SHARED)
-    add_library(nvrhi SHARED
+if (RHI_BUILD_SHARED)
+    add_library(rhi SHARED
         ${include_common}
         ${src_common}
         ${misc_common})
 else()
-    add_library(nvrhi STATIC
+    add_library(rhi STATIC
         ${include_common}
         ${src_common}
         ${misc_common})
 endif()
 
 
-if (NVRHI_BUILD_SHARED)
-    target_compile_definitions(nvrhi PRIVATE NVRHI_SHARED_LIBRARY_BUILD=1)
-    if(NVRHI_WITH_VULKAN)
-        target_compile_definitions(nvrhi PRIVATE VULKAN_HPP_STORAGE_SHARED VULKAN_HPP_STORAGE_SHARED_EXPORT)
+if (RHI_BUILD_SHARED)
+    target_compile_definitions(rhi PRIVATE RHI_SHARED_LIBRARY_BUILD=1)
+    if(RHI_WITH_VULKAN)
+        target_compile_definitions(rhi PRIVATE VULKAN_HPP_STORAGE_SHARED VULKAN_HPP_STORAGE_SHARED_EXPORT)
     endif()
-    set_property(TARGET nvrhi PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    set_property(TARGET rhi PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
-if (NVRHI_WITH_VALIDATION)
-    target_sources(nvrhi PRIVATE
+if (RHI_WITH_VALIDATION)
+    target_sources(rhi PRIVATE
         ${include_validation}
         ${src_validation})
 endif()
 
-target_include_directories(nvrhi PUBLIC
+target_include_directories(rhi PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>)
 
-set_target_properties(nvrhi PROPERTIES FOLDER "NVRHI")
+set_target_properties(rhi PROPERTIES FOLDER "RHI")
 
-target_compile_definitions(nvrhi PRIVATE NVRHI_WITH_AFTERMATH=$<BOOL:${NVRHI_WITH_AFTERMATH}>)
+target_compile_definitions(rhi PRIVATE RHI_WITH_AFTERMATH=$<BOOL:${RHI_WITH_AFTERMATH}>)
 
 # implementations
 
-if (NVRHI_WITH_DX11)
-    if (NVRHI_BUILD_SHARED)
-        set(nvrhi_d3d11_target nvrhi)
+if (RHI_WITH_DX11)
+    if (RHI_BUILD_SHARED)
+        set(rhi_d3d11_target rhi)
 
-        target_sources(${nvrhi_d3d11_target} PRIVATE
+        target_sources(${rhi_d3d11_target} PRIVATE
             ${include_d3d11}
             ${src_d3d11})
     else()
-        set(nvrhi_d3d11_target nvrhi_d3d11)
+        set(rhi_d3d11_target rhi_d3d11)
 
-        add_library(${nvrhi_d3d11_target} STATIC
+        add_library(${rhi_d3d11_target} STATIC
             ${include_d3d11}
             ${src_d3d11})
 
-        set_target_properties(${nvrhi_d3d11_target} PROPERTIES FOLDER "NVRHI")
-        target_include_directories(${nvrhi_d3d11_target} PRIVATE include)
+        set_target_properties(${rhi_d3d11_target} PROPERTIES FOLDER "RHI")
+        target_include_directories(${rhi_d3d11_target} PRIVATE include)
     endif()
 
-    target_link_libraries(${nvrhi_d3d11_target} PUBLIC d3d11 dxguid)
+    target_link_libraries(${rhi_d3d11_target} PUBLIC d3d11 dxguid)
 
-    if (NVRHI_WITH_NVAPI)
-        target_link_libraries(${nvrhi_d3d11_target} PUBLIC nvapi)
+    if (RHI_WITH_NVAPI)
+        target_link_libraries(${rhi_d3d11_target} PUBLIC nvapi)
     endif()
-    target_compile_definitions(${nvrhi_d3d11_target} PRIVATE NVRHI_D3D11_WITH_NVAPI=$<BOOL:${NVRHI_WITH_NVAPI}>)
+    target_compile_definitions(${rhi_d3d11_target} PRIVATE RHI_D3D11_WITH_NVAPI=$<BOOL:${RHI_WITH_NVAPI}>)
 
-    if (NVRHI_WITH_AFTERMATH)
-        target_link_libraries(${nvrhi_d3d11_target} PUBLIC aftermath)
+    if (RHI_WITH_AFTERMATH)
+        target_link_libraries(${rhi_d3d11_target} PUBLIC aftermath)
     endif()
-    target_compile_definitions(${nvrhi_d3d11_target} PRIVATE NVRHI_WITH_AFTERMATH=$<BOOL:${NVRHI_WITH_AFTERMATH}>)
+    target_compile_definitions(${rhi_d3d11_target} PRIVATE RHI_WITH_AFTERMATH=$<BOOL:${RHI_WITH_AFTERMATH}>)
 endif()
 
-if (NVRHI_WITH_DX12)
-    if (NVRHI_BUILD_SHARED)
-        set(nvrhi_d3d12_target nvrhi)
+if (RHI_WITH_DX12)
+    if (RHI_BUILD_SHARED)
+        set(rhi_d3d12_target rhi)
 
-        target_sources(${nvrhi_d3d12_target} PRIVATE
+        target_sources(${rhi_d3d12_target} PRIVATE
             ${include_d3d12}
             ${src_d3d12})
     else()
-        set(nvrhi_d3d12_target nvrhi_d3d12)
+        set(rhi_d3d12_target rhi_d3d12)
 
-        add_library(${nvrhi_d3d12_target} STATIC
+        add_library(${rhi_d3d12_target} STATIC
             ${include_d3d12}
             ${src_d3d12})
 
-        set_target_properties(${nvrhi_d3d12_target} PROPERTIES FOLDER "NVRHI")
-        target_include_directories(${nvrhi_d3d12_target} PRIVATE include)
+        set_target_properties(${rhi_d3d12_target} PROPERTIES FOLDER "RHI")
+        target_include_directories(${rhi_d3d12_target} PRIVATE include)
     endif()
 
-    if (NVRHI_WITH_RTXMU)
-        target_compile_definitions(${nvrhi_d3d12_target} PUBLIC NVRHI_WITH_RTXMU=1)
-        target_link_libraries(${nvrhi_d3d12_target} PUBLIC rtxmu)
+    if (RHI_WITH_RTXMU)
+        target_compile_definitions(${rhi_d3d12_target} PUBLIC RHI_WITH_RTXMU=1)
+        target_link_libraries(${rhi_d3d12_target} PUBLIC rtxmu)
     endif()
 
-    target_link_libraries(${nvrhi_d3d12_target} PUBLIC d3d12 dxguid)
+    target_link_libraries(${rhi_d3d12_target} PUBLIC d3d12 dxguid)
 
-    if (NVRHI_WITH_NVAPI)
-        target_link_libraries(${nvrhi_d3d12_target} PUBLIC nvapi)
+    if (RHI_WITH_NVAPI)
+        target_link_libraries(${rhi_d3d12_target} PUBLIC nvapi)
     endif()
-    target_compile_definitions(${nvrhi_d3d12_target} PRIVATE NVRHI_D3D12_WITH_NVAPI=$<BOOL:${NVRHI_WITH_NVAPI}>)
+    target_compile_definitions(${rhi_d3d12_target} PRIVATE RHI_D3D12_WITH_NVAPI=$<BOOL:${RHI_WITH_NVAPI}>)
 
-    if (NVRHI_WITH_AFTERMATH)
-        target_link_libraries(${nvrhi_d3d12_target} PUBLIC aftermath)
+    if (RHI_WITH_AFTERMATH)
+        target_link_libraries(${rhi_d3d12_target} PUBLIC aftermath)
     endif()
-    target_compile_definitions(${nvrhi_d3d12_target} PRIVATE NVRHI_WITH_AFTERMATH=$<BOOL:${NVRHI_WITH_AFTERMATH}>)
+    target_compile_definitions(${rhi_d3d12_target} PRIVATE RHI_WITH_AFTERMATH=$<BOOL:${RHI_WITH_AFTERMATH}>)
 endif()
 
-if (NVRHI_WITH_VULKAN)
-    if (NVRHI_BUILD_SHARED)
-        set(nvrhi_vulkan_target nvrhi)
+if (RHI_WITH_VULKAN)
+    if (RHI_BUILD_SHARED)
+        set(rhi_vulkan_target rhi)
 
-        target_sources(${nvrhi_vulkan_target} PRIVATE
+        target_sources(${rhi_vulkan_target} PRIVATE
             ${include_vk}
             ${src_vk})
     else()
-        set(nvrhi_vulkan_target nvrhi_vk)
+        set(rhi_vulkan_target rhi_vk)
 
-        add_library(${nvrhi_vulkan_target} STATIC
+        add_library(${rhi_vulkan_target} STATIC
             ${include_vk}
             ${src_vk})
 
-        set_target_properties(${nvrhi_vulkan_target} PROPERTIES FOLDER "NVRHI")
-        target_include_directories(${nvrhi_vulkan_target} PRIVATE include)
+        set_target_properties(${rhi_vulkan_target} PROPERTIES FOLDER "RHI")
+        target_include_directories(${rhi_vulkan_target} PRIVATE include)
     endif()
     
     if(WIN32)
-        target_compile_definitions(${nvrhi_vulkan_target} PUBLIC VK_USE_PLATFORM_WIN32_KHR)
-        target_compile_definitions(${nvrhi_vulkan_target} PRIVATE NOMINMAX)
+        target_compile_definitions(${rhi_vulkan_target} PUBLIC VK_USE_PLATFORM_WIN32_KHR)
+        target_compile_definitions(${rhi_vulkan_target} PRIVATE NOMINMAX)
     endif()
 
-    if (NVRHI_WITH_RTXMU)
-        target_compile_definitions(${nvrhi_vulkan_target} PUBLIC NVRHI_WITH_RTXMU=1)
-        target_link_libraries(${nvrhi_vulkan_target} PUBLIC rtxmu)
+    if (RHI_WITH_RTXMU)
+        target_compile_definitions(${rhi_vulkan_target} PUBLIC RHI_WITH_RTXMU=1)
+        target_link_libraries(${rhi_vulkan_target} PUBLIC rtxmu)
     endif()
 
     if (TARGET Vulkan-Headers)
-        target_link_libraries(${nvrhi_vulkan_target} PRIVATE Vulkan-Headers)
+        target_link_libraries(${rhi_vulkan_target} PRIVATE Vulkan-Headers)
     elseif (TARGET Vulkan::Headers)
-        target_link_libraries(${nvrhi_vulkan_target} PRIVATE Vulkan::Headers)
+        target_link_libraries(${rhi_vulkan_target} PRIVATE Vulkan::Headers)
     endif()
 
-    if (NVRHI_WITH_AFTERMATH)
-        target_link_libraries(${nvrhi_vulkan_target} PUBLIC aftermath)
+    if (RHI_WITH_AFTERMATH)
+        target_link_libraries(${rhi_vulkan_target} PUBLIC aftermath)
     endif()
-    target_compile_definitions(${nvrhi_vulkan_target} PRIVATE NVRHI_WITH_AFTERMATH=$<BOOL:${NVRHI_WITH_AFTERMATH}>)
+    target_compile_definitions(${rhi_vulkan_target} PRIVATE RHI_WITH_AFTERMATH=$<BOOL:${RHI_WITH_AFTERMATH}>)
 endif()
 
 
-if (NVRHI_INSTALL)
-    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/nvrhi
+if (RHI_INSTALL)
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/rhi
         DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
 
-    install(TARGETS nvrhi
-        EXPORT "nvrhiTargets"
+    install(TARGETS rhi
+        EXPORT "rhiTargets"
         RUNTIME DESTINATION bin
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib)
 
-    if (NOT NVRHI_BUILD_SHARED)
-        if (NVRHI_WITH_DX11)
-            install(TARGETS ${nvrhi_d3d11_target} DESTINATION "lib" EXPORT "nvrhiTargets")
+    if (NOT RHI_BUILD_SHARED)
+        if (RHI_WITH_DX11)
+            install(TARGETS ${rhi_d3d11_target} DESTINATION "lib" EXPORT "rhiTargets")
         endif()
 
-        if (NVRHI_WITH_DX12)
-            install(TARGETS ${nvrhi_d3d12_target} DESTINATION "lib" EXPORT "nvrhiTargets")
+        if (RHI_WITH_DX12)
+            install(TARGETS ${rhi_d3d12_target} DESTINATION "lib" EXPORT "rhiTargets")
         endif()
 
-        if (NVRHI_WITH_VULKAN)
-            install(TARGETS ${nvrhi_vulkan_target} DESTINATION "lib" EXPORT "nvrhiTargets")
+        if (RHI_WITH_VULKAN)
+            install(TARGETS ${rhi_vulkan_target} DESTINATION "lib" EXPORT "rhiTargets")
         endif()
     endif()
 
-    if (NVRHI_INSTALL_EXPORTS)
-        set(nvrhi_CONFIG_PATH "lib/cmake/nvrhi")
+    if (RHI_INSTALL_EXPORTS)
+        set(rhi_CONFIG_PATH "lib/cmake/rhi")
 
         include(CMakePackageConfigHelpers)
 
         configure_package_config_file(
-            src/nvrhiConfig.cmake.in
-            src/nvrhiConfig.cmake
-            INSTALL_DESTINATION "${nvrhi_CONFIG_PATH}"
+            src/rhiConfig.cmake.in
+            src/rhiConfig.cmake
+            INSTALL_DESTINATION "${rhi_CONFIG_PATH}"
             NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
         write_basic_package_version_file(
-            src/nvrhiConfigVersion.cmake 
-            VERSION ${nvrhi_VERSION} 
+            src/rhiConfigVersion.cmake 
+            VERSION ${rhi_VERSION} 
             COMPATIBILITY ExactVersion)
 
         install(FILES
-            "${nvrhi_BINARY_DIR}/src/nvrhiConfig.cmake"
-            "${nvrhi_BINARY_DIR}/src/nvrhiConfigVersion.cmake"
-            DESTINATION "${nvrhi_CONFIG_PATH}")
+            "${rhi_BINARY_DIR}/src/rhiConfig.cmake"
+            "${rhi_BINARY_DIR}/src/rhiConfigVersion.cmake"
+            DESTINATION "${rhi_CONFIG_PATH}")
 
-        install(EXPORT "nvrhiTargets" 
-            FILE "nvrhiTargets.cmake"
+        install(EXPORT "rhiTargets" 
+            FILE "rhiTargets.cmake"
             EXPORT_LINK_INTERFACE_LIBRARIES
-            DESTINATION "${nvrhi_CONFIG_PATH}")
+            DESTINATION "${rhi_CONFIG_PATH}")
     endif()
 endif()

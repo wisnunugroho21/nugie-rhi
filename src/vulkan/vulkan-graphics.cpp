@@ -21,13 +21,13 @@
 */
 
 #include "vulkan-backend.h"
-#include <nvrhi/common/misc.h>
+#include <rhi/common/misc.h>
 
-namespace nvrhi::vulkan
+namespace rhi::vulkan
 {
 
     template <typename T>
-    using attachment_vector = nvrhi::static_vector<T, c_MaxRenderTargets + 1>; // render targets + depth
+    using attachment_vector = rhi::static_vector<T, c_MaxRenderTargets + 1>; // render targets + depth
 
     static TextureDimension getDimensionForFramebuffer(TextureDimension dimension, bool isArray)
     {
@@ -650,7 +650,7 @@ namespace nvrhi::vulkan
         auto desc = state.framebuffer->getDesc();
         if (desc.shadingRateAttachment.valid())
         {
-            setTextureState(desc.shadingRateAttachment.texture, nvrhi::TextureSubresourceSet(0, 1, 0, 1), nvrhi::ResourceStates::ShadingRateSurface);
+            setTextureState(desc.shadingRateAttachment.texture, rhi::TextureSubresourceSet(0, 1, 0, 1), rhi::ResourceStates::ShadingRateSurface);
         }
 
         commitBarriers();
@@ -679,7 +679,7 @@ namespace nvrhi::vulkan
 
         if (!state.viewport.viewports.empty() && arraysAreDifferent(state.viewport.viewports, m_CurrentGraphicsState.viewport.viewports))
         {
-            nvrhi::static_vector<vk::Viewport, c_MaxViewports> viewports;
+            rhi::static_vector<vk::Viewport, c_MaxViewports> viewports;
             for (const auto& vp : state.viewport.viewports)
             {
                 viewports.push_back(VKViewportWithDXCoords(vp));
@@ -690,7 +690,7 @@ namespace nvrhi::vulkan
 
         if (!state.viewport.scissorRects.empty() && arraysAreDifferent(state.viewport.scissorRects, m_CurrentGraphicsState.viewport.scissorRects))
         {
-            nvrhi::static_vector<vk::Rect2D, c_MaxViewports> scissors;
+            rhi::static_vector<vk::Rect2D, c_MaxViewports> scissors;
             for (const auto& sc : state.viewport.scissorRects)
             {
                 scissors.push_back(vk::Rect2D(vk::Offset2D(sc.minX, sc.minY),
@@ -822,4 +822,4 @@ namespace nvrhi::vulkan
         m_CurrentCmdBuf->cmdBuf.drawIndexedIndirect(indirectParams->buffer, offsetBytes, drawCount, sizeof(DrawIndexedIndirectArguments));
     }
 
-} // namespace nvrhi::vulkan
+} // namespace rhi::vulkan

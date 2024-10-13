@@ -24,18 +24,18 @@
 #include <unordered_map>
 #include <sstream>
 
-#include <nvrhi/common/misc.h>
+#include <rhi/common/misc.h>
 
-#if defined(NVRHI_SHARED_LIBRARY_BUILD)
+#if defined(RHI_SHARED_LIBRARY_BUILD)
 // Define the Vulkan dynamic dispatcher - this needs to occur in exactly one cpp file in the program.
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 #endif
 
-namespace nvrhi::vulkan
+namespace rhi::vulkan
 {
     DeviceHandle createDevice(const DeviceDesc& desc)
     {
-#if defined(NVRHI_SHARED_LIBRARY_BUILD)
+#if defined(RHI_SHARED_LIBRARY_BUILD)
         const vk::DynamicLoader dl;
         const PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr =   // NOLINT(misc-misplaced-const)
             dl.getProcAddress<PFN_vkGetInstanceProcAddr>("vkGetInstanceProcAddr");
@@ -84,7 +84,7 @@ namespace nvrhi::vulkan
             { VK_KHR_FRAGMENT_SHADING_RATE_EXTENSION_NAME, &m_Context.extensions.KHR_fragment_shading_rate },
             { VK_EXT_OPACITY_MICROMAP_EXTENSION_NAME, &m_Context.extensions.EXT_opacity_micromap },
             { VK_NV_RAY_TRACING_INVOCATION_REORDER_EXTENSION_NAME, &m_Context.extensions.NV_ray_tracing_invocation_reorder },
-#if NVRHI_WITH_AFTERMATH
+#if RHI_WITH_AFTERMATH
             { VK_EXT_DEBUG_UTILS_EXTENSION_NAME, &m_Context.extensions.EXT_debug_utils },
             { VK_NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_EXTENSION_NAME, &m_Context.extensions.NV_device_diagnostic_checkpoints },
             { VK_NV_DEVICE_DIAGNOSTICS_CONFIG_EXTENSION_NAME, &m_Context.extensions.NV_device_diagnostics_config }
@@ -187,7 +187,7 @@ namespace nvrhi::vulkan
             m_Context.physicalDevice.getFeatures2(&deviceFeatures2);
             m_Context.shadingRateFeatures = shadingRateFeatures;
         }
-#ifdef NVRHI_WITH_RTXMU
+#ifdef RHI_WITH_RTXMU
         if (m_Context.extensions.KHR_acceleration_structure)
         {
             m_Context.rtxMemUtil = std::make_unique<rtxmu::VkAccelStructManager>(desc.instance, desc.device, desc.physicalDevice);
@@ -226,7 +226,7 @@ namespace nvrhi::vulkan
             m_Context.error("Failed to create an empty descriptor set layout");
         }
 
-#if NVRHI_WITH_AFTERMATH
+#if RHI_WITH_AFTERMATH
         m_AftermathEnabled = desc.aftermathEnabled;
 #endif
     }
@@ -308,7 +308,7 @@ namespace nvrhi::vulkan
         case Feature::RayTracingPipeline:
             return m_Context.extensions.KHR_ray_tracing_pipeline;
         case Feature::RayTracingOpacityMicromap:
-#ifdef NVRHI_WITH_RTXMU
+#ifdef RHI_WITH_RTXMU
             return false; // RTXMU does not support OMMs
 #else
             return m_Context.extensions.EXT_opacity_micromap && m_Context.extensions.KHR_synchronization2;
@@ -520,7 +520,7 @@ namespace nvrhi::vulkan
 
             (void)device.debugMarkerSetObjectNameEXT(&info);
         }
-#if NVRHI_WITH_AFTERMATH
+#if RHI_WITH_AFTERMATH
         if (extensions.EXT_debug_utils && name && *name)
         {
             auto info = vk::DebugUtilsObjectNameInfoEXT()
@@ -542,4 +542,4 @@ namespace nvrhi::vulkan
         messageCallback->message(MessageSeverity::Warning, message.c_str());
     }
 
-} // namespace nvrhi::vulkan
+} // namespace rhi::vulkan

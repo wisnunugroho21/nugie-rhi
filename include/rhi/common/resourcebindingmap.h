@@ -22,11 +22,11 @@
 
 #pragma once
 
-#include <nvrhi/common/containers.h>
-#include <nvrhi/nvrhi.h>
+#include <rhi/common/containers.h>
+#include <rhi/rhi.h>
 #include <unordered_map>
 
-namespace nvrhi {
+namespace rhi {
 
 // describes a texture binding --- used to manage SRV / VkImageView per texture
 struct TextureBindingKey : public TextureSubresourceSet
@@ -78,26 +78,26 @@ struct BufferBindingKey : public BufferRange
     }
 };
 
-} // namespace nvrhi
+} // namespace rhi
 
 namespace std
 {
-    template<> struct hash<nvrhi::TextureBindingKey>
+    template<> struct hash<rhi::TextureBindingKey>
     {
-        std::size_t operator()(nvrhi::TextureBindingKey const& s) const noexcept
+        std::size_t operator()(rhi::TextureBindingKey const& s) const noexcept
         {
-            return std::hash<nvrhi::Format>()(s.format)
-                ^ std::hash<nvrhi::TextureSubresourceSet>()(s)
+            return std::hash<rhi::Format>()(s.format)
+                ^ std::hash<rhi::TextureSubresourceSet>()(s)
                 ^ std::hash<bool>()(s.isReadOnlyDSV);
         }
     };
 
-    template<> struct hash<nvrhi::BufferBindingKey>
+    template<> struct hash<rhi::BufferBindingKey>
     {
-        std::size_t operator()(nvrhi::BufferBindingKey const& s) const noexcept
+        std::size_t operator()(rhi::BufferBindingKey const& s) const noexcept
         {
-            return std::hash<nvrhi::Format>()(s.format)
-                ^ std::hash<nvrhi::BufferRange>()(s);
+            return std::hash<rhi::Format>()(s.format)
+                ^ std::hash<rhi::BufferRange>()(s);
         }
     };
 }

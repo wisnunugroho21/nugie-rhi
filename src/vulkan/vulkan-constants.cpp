@@ -27,12 +27,12 @@
 
 #define ENABLE_SHORTCUT_CONVERSIONS 1
 
-namespace nvrhi::vulkan
+namespace rhi::vulkan
 {
 
     struct FormatMapping
     {
-        nvrhi::Format rhiFormat;
+        rhi::Format rhiFormat;
         VkFormat vkFormat;
     };
 
@@ -108,9 +108,9 @@ namespace nvrhi::vulkan
 
     } };
 
-    VkFormat convertFormat(nvrhi::Format format)
+    VkFormat convertFormat(rhi::Format format)
     {
-        assert(format < nvrhi::Format::COUNT);
+        assert(format < rhi::Format::COUNT);
         assert(c_FormatMap[uint32_t(format)].rhiFormat == format);
 
         return c_FormatMap[uint32_t(format)].vkFormat;
@@ -209,7 +209,7 @@ namespace nvrhi::vulkan
 
     struct ResourceStateMappingInternal
     {
-        ResourceStates nvrhiState;
+        ResourceStates rhiState;
         vk::PipelineStageFlags2 stageFlags;
         vk::AccessFlags2 accessMask;
         vk::ImageLayout imageLayout;
@@ -222,7 +222,7 @@ namespace nvrhi::vulkan
             assert((stageFlags & vk::PipelineStageFlagBits2::eMicromapBuildEXT) != vk::PipelineStageFlagBits2::eMicromapBuildEXT);
             assert((accessMask & vk::AccessFlagBits2::eMicromapWriteEXT) != vk::AccessFlagBits2::eMicromapWriteEXT);
             return
-                ResourceStateMapping(nvrhiState,
+                ResourceStateMapping(rhiState,
                     reinterpret_cast<const vk::PipelineStageFlags&>(stageFlags),
                     reinterpret_cast<const vk::AccessFlags&>(accessMask),
                     imageLayout
@@ -231,7 +231,7 @@ namespace nvrhi::vulkan
 
         ResourceStateMapping2 AsResourceStateMapping2() const
         {
-            return ResourceStateMapping2(nvrhiState, stageFlags, accessMask, imageLayout);
+            return ResourceStateMapping2(rhiState, stageFlags, accessMask, imageLayout);
         }
     };
 
@@ -348,10 +348,10 @@ namespace nvrhi::vulkan
             {
                 const ResourceStateMappingInternal& mapping = g_ResourceStateMap[bitIndex];
 
-                assert(uint32_t(mapping.nvrhiState) == bit);
+                assert(uint32_t(mapping.rhiState) == bit);
                 assert(result.imageLayout == vk::ImageLayout::eUndefined || mapping.imageLayout == vk::ImageLayout::eUndefined || result.imageLayout == mapping.imageLayout);
 
-                result.nvrhiState = ResourceStates(result.nvrhiState | mapping.nvrhiState);
+                result.rhiState = ResourceStates(result.rhiState | mapping.rhiState);
                 result.accessMask |= mapping.accessMask;
                 result.stageFlags |= mapping.stageFlags;
                 if (mapping.imageLayout != vk::ImageLayout::eUndefined)
@@ -363,7 +363,7 @@ namespace nvrhi::vulkan
             bitIndex++;
         }
 
-        assert(result.nvrhiState == state);
+        assert(result.rhiState == state);
 
         return result;
     }
@@ -818,4 +818,4 @@ namespace nvrhi::vulkan
         }
     }
 
-} // namespace nvrhi::vulkan
+} // namespace rhi::vulkan

@@ -22,9 +22,9 @@
 
 #pragma once
 
-#include <nvrhi/vulkan.h>
-#include <nvrhi/utils.h>
-#include <nvrhi/common/aftermath.h>
+#include <rhi/vulkan.h>
+#include <rhi/utils.h>
+#include <rhi/common/aftermath.h>
 #include "../common/state-tracking.h"
 #include "../common/versioning.h"
 #include <mutex>
@@ -33,12 +33,12 @@
 #define VULKAN_HPP_DISPATCH_LOADER_DYNAMIC 1
 #include <vulkan/vulkan.hpp>
 
-#ifdef NVRHI_WITH_RTXMU
+#ifdef RHI_WITH_RTXMU
 #include <rtxmu/VkAccelStructManager.h>
 #endif
 
 #if (VK_HEADER_VERSION < 230)
-#error "Vulkan SDK version 1.3.230 or later is required to compile NVRHI"
+#error "Vulkan SDK version 1.3.230 or later is required to compile RHI"
 #endif
 
 namespace std
@@ -61,7 +61,7 @@ namespace std
 #define ASSERT_VK_OK(res) do {(void)(res);} while(0)
 #endif // _DEBUG
 
-namespace nvrhi::vulkan
+namespace rhi::vulkan
 {
     class Texture;
     class StagingTexture;
@@ -80,22 +80,22 @@ namespace nvrhi::vulkan
 
     struct ResourceStateMapping
     {
-        ResourceStates nvrhiState;
+        ResourceStates rhiState;
         vk::PipelineStageFlags stageFlags;
         vk::AccessFlags accessMask;
         vk::ImageLayout imageLayout;
-        ResourceStateMapping(ResourceStates nvrhiState, vk::PipelineStageFlags stageFlags, vk::AccessFlags accessMask, vk::ImageLayout imageLayout):
-            nvrhiState(nvrhiState), stageFlags(stageFlags), accessMask(accessMask), imageLayout(imageLayout) {}
+        ResourceStateMapping(ResourceStates rhiState, vk::PipelineStageFlags stageFlags, vk::AccessFlags accessMask, vk::ImageLayout imageLayout):
+            rhiState(rhiState), stageFlags(stageFlags), accessMask(accessMask), imageLayout(imageLayout) {}
     };
 
     struct ResourceStateMapping2 // for use with KHR_synchronization2
     {
-        ResourceStates nvrhiState;
+        ResourceStates rhiState;
         vk::PipelineStageFlags2 stageFlags;
         vk::AccessFlags2 accessMask;
         vk::ImageLayout imageLayout;
-        ResourceStateMapping2(ResourceStates nvrhiState, vk::PipelineStageFlags2 stageFlags, vk::AccessFlags2 accessMask, vk::ImageLayout imageLayout) :
-            nvrhiState(nvrhiState), stageFlags(stageFlags), accessMask(accessMask), imageLayout(imageLayout) {}
+        ResourceStateMapping2(ResourceStates rhiState, vk::PipelineStageFlags2 stageFlags, vk::AccessFlags2 accessMask, vk::ImageLayout imageLayout) :
+            rhiState(rhiState), stageFlags(stageFlags), accessMask(accessMask), imageLayout(imageLayout) {}
     };
 
     vk::SamplerAddressMode convertSamplerAddressMode(SamplerAddressMode mode);
@@ -130,7 +130,7 @@ namespace nvrhi::vulkan
         std::vector<vk::SpecializationMapEntry>& specMapEntries,
         std::vector<uint32_t>& specData);
 
-#ifdef NVRHI_WITH_RTXMU
+#ifdef RHI_WITH_RTXMU
     struct RtxMuResources
     {
         std::vector<uint64_t> asBuildsCompleted;
@@ -172,7 +172,7 @@ namespace nvrhi::vulkan
             bool EXT_conservative_rasterization = false;
             bool EXT_opacity_micromap = false;
             bool NV_ray_tracing_invocation_reorder = false;
-#if NVRHI_WITH_AFTERMATH
+#if RHI_WITH_AFTERMATH
             bool EXT_debug_utils = false;
             bool NV_device_diagnostic_checkpoints = false;
             bool NV_device_diagnostics_config= false;
@@ -188,7 +188,7 @@ namespace nvrhi::vulkan
         vk::PhysicalDeviceRayTracingInvocationReorderPropertiesNV nvRayTracingInvocationReorderProperties;
         vk::PhysicalDeviceFragmentShadingRateFeaturesKHR shadingRateFeatures;
         IMessageCallback* messageCallback = nullptr;
-#ifdef NVRHI_WITH_RTXMU
+#ifdef RHI_WITH_RTXMU
         std::unique_ptr<rtxmu::VkAccelStructManager> rtxMemUtil;
         std::unique_ptr<RtxMuResources> rtxMuResources;
 #endif
@@ -214,7 +214,7 @@ namespace nvrhi::vulkan
         uint64_t recordingID = 0;
         uint64_t submissionID = 0;
 
-#ifdef NVRHI_WITH_RTXMU
+#ifdef RHI_WITH_RTXMU
         std::vector<uint64_t> rtxmuBuildIds;
         std::vector<uint64_t> rtxmuCompactionIds;
 #endif
@@ -486,7 +486,7 @@ namespace nvrhi::vulkan
             command list;
 
         - (queue & c_VersionQueueMask << c_VersionQueueShift) is the queue index, 
-            see nvrhi::CommandQueue for values;
+            see rhi::CommandQueue for values;
 
         - (id & c_VersionIDMask) is the instance ID of the command list, either 
             pending or submitted. If pending, it matches the recordingID field of 
@@ -1046,7 +1046,7 @@ namespace nvrhi::vulkan
         uint64_t getDeviceAddress() const override;
     };
 
-    class Device : public RefCounter<nvrhi::vulkan::IDevice>
+    class Device : public RefCounter<rhi::vulkan::IDevice>
     {
     public:
         // Internal backend methods
@@ -1224,7 +1224,7 @@ namespace nvrhi::vulkan
         void buildBottomLevelAccelStruct(rt::IAccelStruct* as, const rt::GeometryDesc* pGeometries, size_t numGeometries, rt::AccelStructBuildFlags buildFlags) override;
         void compactBottomLevelAccelStructs() override;
         void buildTopLevelAccelStruct(rt::IAccelStruct* as, const rt::InstanceDesc* pInstances, size_t numInstances, rt::AccelStructBuildFlags buildFlags) override;
-        void buildTopLevelAccelStructFromBuffer(rt::IAccelStruct* as, nvrhi::IBuffer* instanceBuffer, uint64_t instanceBufferOffset, size_t numInstances,
+        void buildTopLevelAccelStructFromBuffer(rt::IAccelStruct* as, rhi::IBuffer* instanceBuffer, uint64_t instanceBufferOffset, size_t numInstances,
             rt::AccelStructBuildFlags buildFlags = rt::AccelStructBuildFlags::None) override;
 
         void beginTimerQuery(ITimerQuery* query) override;
@@ -1271,7 +1271,7 @@ namespace nvrhi::vulkan
         // current internal command buffer
         TrackedCommandBufferPtr m_CurrentCmdBuf = nullptr;
 
-#if NVRHI_WITH_AFTERMATH
+#if RHI_WITH_AFTERMATH
         AftermathMarkerTracker m_AftermathTracker;
 #endif
 
@@ -1325,4 +1325,4 @@ namespace nvrhi::vulkan
         void commitBarriersInternal_synchronization2();
     };
 
-} // namespace nvrhi::vulkan
+} // namespace rhi::vulkan

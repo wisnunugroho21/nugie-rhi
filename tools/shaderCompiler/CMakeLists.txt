@@ -25,11 +25,11 @@ set(SRC_FILES
     options.cpp
     options.h
     ../../src/common/shader-blob.cpp
-    ../../include/nvrhi/common/containers.h
-    ../../include/nvrhi/common/misc.h
-    ../../include/nvrhi/common/resource.h
-    ../../include/nvrhi/common/shader-blob.h
-    ../../include/nvrhi/nvrhi.h
+    ../../include/rhi/common/containers.h
+    ../../include/rhi/common/misc.h
+    ../../include/rhi/common/resource.h
+    ../../include/rhi/common/shader-blob.h
+    ../../include/rhi/rhi.h
 )
 
 add_executable(shaderCompiler "${SRC_FILES}")
@@ -42,11 +42,11 @@ else()
 	target_link_libraries(shaderCompiler stdc++fs pthread)
 endif()
 
-set_target_properties(shaderCompiler PROPERTIES OUTPUT_NAME "nvrhi-scomp")
+set_target_properties(shaderCompiler PROPERTIES OUTPUT_NAME "rhi-scomp")
 
 set_property(TARGET shaderCompiler PROPERTY FOLDER "Tools")
 
-if (NVRHI_INSTALL)
+if (RHI_INSTALL)
     install(TARGETS shaderCompiler
         RUNTIME DESTINATION bin)
 endif()

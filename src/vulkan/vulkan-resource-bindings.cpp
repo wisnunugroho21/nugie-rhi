@@ -21,10 +21,10 @@
 */
 
 #include "vulkan-backend.h"
-#include <nvrhi/common/misc.h>
+#include <rhi/common/misc.h>
 #include <sstream>
 
-namespace nvrhi::vulkan
+namespace rhi::vulkan
 {
 
     BindingLayoutHandle Device::createBindingLayout(const BindingLayoutDesc& desc)
@@ -110,7 +110,7 @@ namespace nvrhi::vulkan
 
             case ResourceType::PushConstants:
                 // don't need any descriptors for the push constants, but the vulkanLayoutBindings array 
-                // must match the binding layout items for further processing within nvrhi --
+                // must match the binding layout items for further processing within rhi --
                 // so set descriptorCount to 0 instead of skipping it
                 registerOffset = _desc.bindingOffsets.constantBuffer;
                 descriptorType = vk::DescriptorType::eUniformBuffer;
@@ -450,13 +450,13 @@ namespace nvrhi::vulkan
                     format = buffer->desc.format;
                 }
 
-                auto vkformat = nvrhi::vulkan::convertFormat(format);
+                auto vkformat = rhi::vulkan::convertFormat(format);
                 const auto range = binding.range.resolve(buffer->desc);
 
                 size_t viewInfoHash = 0;
-                nvrhi::hash_combine(viewInfoHash, range.byteOffset);
-                nvrhi::hash_combine(viewInfoHash, range.byteSize);
-                nvrhi::hash_combine(viewInfoHash, (uint64_t)vkformat);
+                rhi::hash_combine(viewInfoHash, range.byteOffset);
+                rhi::hash_combine(viewInfoHash, range.byteSize);
+                rhi::hash_combine(viewInfoHash, (uint64_t)vkformat);
 
                 const auto& bufferViewFound = buffer->viewCache.find(viewInfoHash);
                 auto& bufferViewRef = (bufferViewFound != buffer->viewCache.end()) ? bufferViewFound->second : buffer->viewCache[viewInfoHash];
@@ -769,13 +769,13 @@ namespace nvrhi::vulkan
                 {
                     const auto& buffer = checked_cast<Buffer*>(binding.resourceHandle);
 
-                    auto vkformat = nvrhi::vulkan::convertFormat(binding.format);
+                    auto vkformat = rhi::vulkan::convertFormat(binding.format);
 
                     const auto range = binding.range.resolve(buffer->desc);
                     size_t viewInfoHash = 0;
-                    nvrhi::hash_combine(viewInfoHash, range.byteOffset);
-                    nvrhi::hash_combine(viewInfoHash, range.byteSize);
-                    nvrhi::hash_combine(viewInfoHash, (uint64_t)vkformat);
+                    rhi::hash_combine(viewInfoHash, range.byteOffset);
+                    rhi::hash_combine(viewInfoHash, range.byteSize);
+                    rhi::hash_combine(viewInfoHash, (uint64_t)vkformat);
 
                     const auto& bufferViewFound = buffer->viewCache.find(viewInfoHash);
                     auto& bufferViewRef = (bufferViewFound != buffer->viewCache.end()) ? bufferViewFound->second : buffer->viewCache[viewInfoHash];
@@ -1069,4 +1069,4 @@ namespace nvrhi::vulkan
         return res;
     }
 
-} // namespace nvrhi::vulkan
+} // namespace rhi::vulkan

@@ -22,9 +22,9 @@
 
 #include "d3d12-backend.h"
 
-#include <nvrhi/common/containers.h>
-#include <nvrhi/common/misc.h>
-#include <nvrhi/utils.h>
+#include <rhi/common/containers.h>
+#include <rhi/common/misc.h>
+#include <rhi/utils.h>
 
 #include <vector>
 #include <set>
@@ -38,7 +38,7 @@ namespace
     {
         struct RaytracingGeometryDesc
         {
-#if NVRHI_WITH_NVAPI_OPACITY_MICROMAP
+#if RHI_WITH_NVAPI_OPACITY_MICROMAP
             NVAPI_D3D12_RAYTRACING_GEOMETRY_TYPE_EX type;
 #else
             D3D12_RAYTRACING_GEOMETRY_TYPE type;
@@ -48,12 +48,12 @@ namespace
             {
                 D3D12_RAYTRACING_GEOMETRY_TRIANGLES_DESC           triangles;
                 D3D12_RAYTRACING_GEOMETRY_AABBS_DESC               aabbs;
-#if NVRHI_WITH_NVAPI_OPACITY_MICROMAP
+#if RHI_WITH_NVAPI_OPACITY_MICROMAP
                 NVAPI_D3D12_RAYTRACING_GEOMETRY_OMM_TRIANGLES_DESC ommTriangles;
 #endif
-#if NVRHI_WITH_NVAPI_DISPLACEMENT_MICROMAP
+#if RHI_WITH_NVAPI_DISPLACEMENT_MICROMAP
                 // Note: this union member is currently only used to pad the structure so that it's the same size as NVAPI_D3D12_RAYTRACING_GEOMETRY_DESC_EX.
-                // There is no support for Displacement Micro Maps in NVRHI API yet.
+                // There is no support for Displacement Micro Maps in RHI API yet.
                 NVAPI_D3D12_RAYTRACING_GEOMETRY_DMM_TRIANGLES_DESC dmmTriangles;
 #endif
             };
@@ -75,7 +75,7 @@ namespace
                 static_assert(sizeof(D3D12_RAYTRACING_GEOMETRY_DESC::AABBs) == sizeof(RaytracingGeometryDesc::aabbs));
             }
             {
-#if NVRHI_WITH_NVAPI_OPACITY_MICROMAP || NVRHI_WITH_NVAPI_DISPLACEMENT_MICROMAP
+#if RHI_WITH_NVAPI_OPACITY_MICROMAP || RHI_WITH_NVAPI_DISPLACEMENT_MICROMAP
                 static_assert(sizeof(NVAPI_D3D12_RAYTRACING_GEOMETRY_DESC_EX) == sizeof(RaytracingGeometryDesc));
                 static_assert(offsetof(NVAPI_D3D12_RAYTRACING_GEOMETRY_DESC_EX, type) == offsetof(RaytracingGeometryDesc, type));
                 static_assert(sizeof(NVAPI_D3D12_RAYTRACING_GEOMETRY_DESC_EX::type) == sizeof(RaytracingGeometryDesc::type));
@@ -87,11 +87,11 @@ namespace
                 static_assert(sizeof(NVAPI_D3D12_RAYTRACING_GEOMETRY_DESC_EX::aabbs) == sizeof(RaytracingGeometryDesc::aabbs));
 #endif
 
-#if NVRHI_WITH_NVAPI_OPACITY_MICROMAP
+#if RHI_WITH_NVAPI_OPACITY_MICROMAP
                 static_assert(offsetof(NVAPI_D3D12_RAYTRACING_GEOMETRY_DESC_EX, ommTriangles) == offsetof(RaytracingGeometryDesc, ommTriangles));
                 static_assert(sizeof(NVAPI_D3D12_RAYTRACING_GEOMETRY_DESC_EX::ommTriangles) == sizeof(RaytracingGeometryDesc::ommTriangles));
 #endif
-#if NVRHI_WITH_NVAPI_DISPLACEMENT_MICROMAP
+#if RHI_WITH_NVAPI_DISPLACEMENT_MICROMAP
                 static_assert(offsetof(NVAPI_D3D12_RAYTRACING_GEOMETRY_DESC_EX, dmmTriangles) == offsetof(RaytracingGeometryDesc, dmmTriangles));
                 static_assert(sizeof(NVAPI_D3D12_RAYTRACING_GEOMETRY_DESC_EX::dmmTriangles) == sizeof(RaytracingGeometryDesc::dmmTriangles));
 #endif
@@ -103,7 +103,7 @@ namespace
         }
 
         void SetTriangles(const D3D12_RAYTRACING_GEOMETRY_TRIANGLES_DESC& triangles) {
-#if NVRHI_WITH_NVAPI_OPACITY_MICROMAP
+#if RHI_WITH_NVAPI_OPACITY_MICROMAP
             m_data.type = NVAPI_D3D12_RAYTRACING_GEOMETRY_TYPE_TRIANGLES_EX;
 #else
             m_data.type = D3D12_RAYTRACING_GEOMETRY_TYPE_TRIANGLES;
@@ -112,7 +112,7 @@ namespace
         }
 
         void SetAABBs(const D3D12_RAYTRACING_GEOMETRY_AABBS_DESC& aabbs) {
-#if NVRHI_WITH_NVAPI_OPACITY_MICROMAP
+#if RHI_WITH_NVAPI_OPACITY_MICROMAP
             m_data.type = NVAPI_D3D12_RAYTRACING_GEOMETRY_TYPE_PROCEDURAL_PRIMITIVE_AABBS_EX;
 #else
             m_data.type = D3D12_RAYTRACING_GEOMETRY_TYPE_PROCEDURAL_PRIMITIVE_AABBS;
@@ -120,7 +120,7 @@ namespace
             m_data.aabbs = aabbs;
         }
 
-#if NVRHI_WITH_NVAPI_OPACITY_MICROMAP
+#if RHI_WITH_NVAPI_OPACITY_MICROMAP
         void SetOMMTriangles(const NVAPI_D3D12_RAYTRACING_GEOMETRY_OMM_TRIANGLES_DESC& ommTriangles) {
             m_data.type = NVAPI_D3D12_RAYTRACING_GEOMETRY_TYPE_OMM_TRIANGLES_EX;
             m_data.ommTriangles = ommTriangles;
@@ -180,7 +180,7 @@ namespace
         const T GetAs();
     };
 
-#if NVRHI_WITH_NVAPI_OPACITY_MICROMAP
+#if RHI_WITH_NVAPI_OPACITY_MICROMAP
     template<>
     const NVAPI_D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS_EX D3D12BuildRaytracingAccelerationStructureInputs::GetAs<NVAPI_D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS_EX>() {
         NVAPI_D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS_EX inputs = {};
@@ -210,7 +210,7 @@ namespace
     }
 }
 
-namespace nvrhi::d3d12
+namespace rhi::d3d12
 {
     uint32_t ShaderTable::getNumEntries() const
     {
@@ -367,7 +367,7 @@ namespace nvrhi::d3d12
 
     AccelStruct::~AccelStruct()
     {
-#ifdef NVRHI_WITH_RTXMU
+#ifdef RHI_WITH_RTXMU
         bool isManaged = desc.isTopLevel;
         if (!isManaged && rtxmuId != ~0ull)
         {
@@ -375,7 +375,7 @@ namespace nvrhi::d3d12
             m_Context.rtxMemUtil->RemoveAccelerationStructures(delAccel);
             rtxmuId = ~0ull;
         }
-#endif // NVRHI_WITH_RTXMU
+#endif // RHI_WITH_RTXMU
     }
 
     Object OpacityMicromap::getNativeObject(ObjectType objectType)
@@ -401,23 +401,23 @@ namespace nvrhi::d3d12
 
     uint64_t AccelStruct::getDeviceAddress() const
     {
-#ifdef NVRHI_WITH_RTXMU
+#ifdef RHI_WITH_RTXMU
         if (!desc.isTopLevel)
             return m_Context.rtxMemUtil->GetAccelStructGPUVA(rtxmuId);
 #endif
         return dataBuffer->gpuVA;
     }
 
-#if NVRHI_WITH_NVAPI_OPACITY_MICROMAP
-    static const NVAPI_D3D12_RAYTRACING_OPACITY_MICROMAP_USAGE_COUNT* CastToUsageCount(const nvrhi::rt::OpacityMicromapUsageCount* desc)
+#if RHI_WITH_NVAPI_OPACITY_MICROMAP
+    static const NVAPI_D3D12_RAYTRACING_OPACITY_MICROMAP_USAGE_COUNT* CastToUsageCount(const rhi::rt::OpacityMicromapUsageCount* desc)
     {
-        static_assert(sizeof(nvrhi::rt::OpacityMicromapUsageCount) == sizeof(NVAPI_D3D12_RAYTRACING_OPACITY_MICROMAP_USAGE_COUNT));
-        static_assert(offsetof(nvrhi::rt::OpacityMicromapUsageCount, count) == offsetof(NVAPI_D3D12_RAYTRACING_OPACITY_MICROMAP_USAGE_COUNT, count));
-        static_assert(sizeof(nvrhi::rt::OpacityMicromapUsageCount::count) == sizeof(NVAPI_D3D12_RAYTRACING_OPACITY_MICROMAP_USAGE_COUNT::count));
-        static_assert(offsetof(nvrhi::rt::OpacityMicromapUsageCount, subdivisionLevel) == offsetof(NVAPI_D3D12_RAYTRACING_OPACITY_MICROMAP_USAGE_COUNT, subdivisionLevel));
-        static_assert(sizeof(nvrhi::rt::OpacityMicromapUsageCount::subdivisionLevel) == sizeof(NVAPI_D3D12_RAYTRACING_OPACITY_MICROMAP_USAGE_COUNT::subdivisionLevel));
-        static_assert(offsetof(nvrhi::rt::OpacityMicromapUsageCount, format) == offsetof(NVAPI_D3D12_RAYTRACING_OPACITY_MICROMAP_USAGE_COUNT, format));
-        static_assert(sizeof(nvrhi::rt::OpacityMicromapUsageCount::format) == sizeof(NVAPI_D3D12_RAYTRACING_OPACITY_MICROMAP_USAGE_COUNT::format));
+        static_assert(sizeof(rhi::rt::OpacityMicromapUsageCount) == sizeof(NVAPI_D3D12_RAYTRACING_OPACITY_MICROMAP_USAGE_COUNT));
+        static_assert(offsetof(rhi::rt::OpacityMicromapUsageCount, count) == offsetof(NVAPI_D3D12_RAYTRACING_OPACITY_MICROMAP_USAGE_COUNT, count));
+        static_assert(sizeof(rhi::rt::OpacityMicromapUsageCount::count) == sizeof(NVAPI_D3D12_RAYTRACING_OPACITY_MICROMAP_USAGE_COUNT::count));
+        static_assert(offsetof(rhi::rt::OpacityMicromapUsageCount, subdivisionLevel) == offsetof(NVAPI_D3D12_RAYTRACING_OPACITY_MICROMAP_USAGE_COUNT, subdivisionLevel));
+        static_assert(sizeof(rhi::rt::OpacityMicromapUsageCount::subdivisionLevel) == sizeof(NVAPI_D3D12_RAYTRACING_OPACITY_MICROMAP_USAGE_COUNT::subdivisionLevel));
+        static_assert(offsetof(rhi::rt::OpacityMicromapUsageCount, format) == offsetof(NVAPI_D3D12_RAYTRACING_OPACITY_MICROMAP_USAGE_COUNT, format));
+        static_assert(sizeof(rhi::rt::OpacityMicromapUsageCount::format) == sizeof(NVAPI_D3D12_RAYTRACING_OPACITY_MICROMAP_USAGE_COUNT::format));
         return reinterpret_cast<const NVAPI_D3D12_RAYTRACING_OPACITY_MICROMAP_USAGE_COUNT*>(desc);
     }
 
@@ -467,7 +467,7 @@ namespace nvrhi::d3d12
         outDxrAABB.AABBCount = aabbs.count;
     }
 
-#if NVRHI_WITH_NVAPI_OPACITY_MICROMAP
+#if RHI_WITH_NVAPI_OPACITY_MICROMAP
     static void fillOmmAttachmentDesc(NVAPI_D3D12_RAYTRACING_GEOMETRY_OMM_ATTACHMENT_DESC& ommAttachment, const rt::GeometryDesc& geometryDesc)
     {
         const auto& triangles = geometryDesc.geometryData.triangles;
@@ -502,7 +502,7 @@ namespace nvrhi::d3d12
         {
             const auto& triangles = geometryDesc.geometryData.triangles;
             if (triangles.opacityMicromap != nullptr || triangles.ommIndexBuffer != nullptr) {
-#if NVRHI_WITH_NVAPI_OPACITY_MICROMAP
+#if RHI_WITH_NVAPI_OPACITY_MICROMAP
                 NVAPI_D3D12_RAYTRACING_GEOMETRY_OMM_TRIANGLES_DESC ommTriangles = {};
                 fillD3dGeometryTrianglesDesc(ommTriangles.triangles, geometryDesc, transform4x4);
                 fillOmmAttachmentDesc(ommTriangles.ommAttachment, geometryDesc);
@@ -557,7 +557,7 @@ namespace nvrhi::d3d12
 
     rt::OpacityMicromapHandle Device::createOpacityMicromap([[maybe_unused]] const rt::OpacityMicromapDesc& desc)
     {
-#if NVRHI_WITH_NVAPI_OPACITY_MICROMAP
+#if RHI_WITH_NVAPI_OPACITY_MICROMAP
         assert(m_OpacityMicromapSupported && "Opacity Micromap not supported");
         NVAPI_D3D12_BUILD_RAYTRACING_OPACITY_MICROMAP_ARRAY_INPUTS inputs = {};
         fillD3dOpacityMicromapDesc(inputs, desc);
@@ -602,7 +602,7 @@ namespace nvrhi::d3d12
         D3D12BuildRaytracingAccelerationStructureInputs ASInputs;
         fillAsInputDescForPreBuildInfo(ASInputs, desc);
 
-#if NVRHI_WITH_NVAPI_OPACITY_MICROMAP
+#if RHI_WITH_NVAPI_OPACITY_MICROMAP
         if (m_NvapiIsInitialized)
         {
             const NVAPI_D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS_EX inputs = ASInputs.GetAs<NVAPI_D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS_EX>();
@@ -637,7 +637,7 @@ namespace nvrhi::d3d12
 
         assert(ASPreBuildInfo.ResultDataMaxSizeInBytes <= ~0u);
 
-#ifdef NVRHI_WITH_RTXMU
+#ifdef RHI_WITH_RTXMU
         bool needBuffer = desc.isTopLevel;
 #else
         bool needBuffer = true;
@@ -706,7 +706,7 @@ namespace nvrhi::d3d12
 
     bool Device::setHlslExtensionsUAV(uint32_t slot)
     {
-#if NVRHI_D3D12_WITH_NVAPI
+#if RHI_D3D12_WITH_NVAPI
         if (GetNvapiIsInitialized())
         {
             NvAPI_Status status = NvAPI_D3D12_SetNvShaderExtnSlotSpaceLocalThread(m_Context.device.Get(), slot, 0);
@@ -723,7 +723,7 @@ namespace nvrhi::d3d12
         }
 #else
         (void)slot;
-        m_Context.error("This version of NVRHI does not support NVIDIA HLSL extensions, please rebuild with NVAPI.");
+        m_Context.error("This version of RHI does not support NVIDIA HLSL extensions, please rebuild with NVAPI.");
 #endif
         return false;
     }
@@ -1243,7 +1243,7 @@ namespace nvrhi::d3d12
     }
 
     void CommandList::buildOpacityMicromap([[maybe_unused]] rt::IOpacityMicromap* pOmm, [[maybe_unused]] const rt::OpacityMicromapDesc& desc) {
-#if NVRHI_WITH_NVAPI_OPACITY_MICROMAP
+#if RHI_WITH_NVAPI_OPACITY_MICROMAP
         OpacityMicromap* omm = checked_cast<OpacityMicromap*>(pOmm);
 
         if (m_EnableAutomaticBarriers)
@@ -1251,7 +1251,7 @@ namespace nvrhi::d3d12
             requireBufferState(desc.inputBuffer, ResourceStates::OpacityMicromapBuildInput);
             requireBufferState(desc.perOmmDescs, ResourceStates::OpacityMicromapBuildInput);
 
-            requireBufferState(omm->dataBuffer, nvrhi::ResourceStates::OpacityMicromapWrite);
+            requireBufferState(omm->dataBuffer, rhi::ResourceStates::OpacityMicromapWrite);
         }
 
         if (desc.trackLiveness)
@@ -1391,7 +1391,7 @@ namespace nvrhi::d3d12
             fillD3dGeometryDesc(geomDesc, geometryDesc, gpuVA);
         }
 
-#ifdef NVRHI_WITH_RTXMU
+#ifdef RHI_WITH_RTXMU
         std::vector<uint64_t> accelStructsToBuild;
         std::vector<D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS> buildInputs;
         buildInputs.push_back(inputs.GetAs<D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS>());
@@ -1454,11 +1454,11 @@ namespace nvrhi::d3d12
 
         if (m_EnableAutomaticBarriers)
         {
-            requireBufferState(as->dataBuffer, nvrhi::ResourceStates::AccelStructWrite);
+            requireBufferState(as->dataBuffer, rhi::ResourceStates::AccelStructWrite);
         }
         commitBarriers();
 
-#if NVRHI_WITH_NVAPI_OPACITY_MICROMAP
+#if RHI_WITH_NVAPI_OPACITY_MICROMAP
         if (checked_cast<d3d12::Device*>(m_Device)->GetNvapiIsInitialized())
         {
             NVAPI_D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC_EX buildDesc = {};
@@ -1485,7 +1485,7 @@ namespace nvrhi::d3d12
             buildDesc.SourceAccelerationStructureData = performUpdate ? as->dataBuffer->gpuVA : 0;
             m_ActiveCommandList->commandList4->BuildRaytracingAccelerationStructure(&buildDesc, 0, nullptr);
         }
-#endif // NVRHI_WITH_RTXMU
+#endif // RHI_WITH_RTXMU
 
         if (as->desc.trackLiveness)
             m_Instance->referencedResources.push_back(as);
@@ -1493,7 +1493,7 @@ namespace nvrhi::d3d12
 
     void CommandList::compactBottomLevelAccelStructs()
     {
-#ifdef NVRHI_WITH_RTXMU
+#ifdef RHI_WITH_RTXMU
 
         if (!m_Resources.asBuildsCompleted.empty())
         {
@@ -1598,14 +1598,14 @@ namespace nvrhi::d3d12
                 static_assert(sizeof(dxrInstance) == sizeof(instance));
                 memcpy(&dxrInstance, &instance, sizeof(instance));
 
-#ifdef NVRHI_WITH_RTXMU
+#ifdef RHI_WITH_RTXMU
                 dxrInstance.AccelerationStructure = m_Context.rtxMemUtil->GetAccelStructGPUVA(blas->rtxmuId);
 #else
                 dxrInstance.AccelerationStructure = blas->dataBuffer->gpuVA;
 
                 if (m_EnableAutomaticBarriers)
                 {
-                    requireBufferState(blas->dataBuffer, nvrhi::ResourceStates::AccelStructBuildBlas);
+                    requireBufferState(blas->dataBuffer, rhi::ResourceStates::AccelStructBuildBlas);
                 }
 #endif
             }
@@ -1615,7 +1615,7 @@ namespace nvrhi::d3d12
             }
         }
 
-#ifdef NVRHI_WITH_RTXMU
+#ifdef RHI_WITH_RTXMU
         m_Context.rtxMemUtil->PopulateUAVBarriersCommandList(m_ActiveCommandList->commandList4, m_Instance->rtxmuBuildIds);
 #endif
 
@@ -1634,7 +1634,7 @@ namespace nvrhi::d3d12
 
         if (m_EnableAutomaticBarriers)
         {
-            requireBufferState(as->dataBuffer, nvrhi::ResourceStates::AccelStructWrite);
+            requireBufferState(as->dataBuffer, rhi::ResourceStates::AccelStructWrite);
         }
         commitBarriers();
 
@@ -1644,7 +1644,7 @@ namespace nvrhi::d3d12
             m_Instance->referencedResources.push_back(as);
     }
 
-    void CommandList::buildTopLevelAccelStructFromBuffer(rt::IAccelStruct* _as, nvrhi::IBuffer* instanceBuffer, uint64_t instanceBufferOffset, size_t numInstances, rt::AccelStructBuildFlags buildFlags)
+    void CommandList::buildTopLevelAccelStructFromBuffer(rt::IAccelStruct* _as, rhi::IBuffer* instanceBuffer, uint64_t instanceBufferOffset, size_t numInstances, rt::AccelStructBuildFlags buildFlags)
     {
         AccelStruct* as = checked_cast<AccelStruct*>(_as);
         
@@ -1653,8 +1653,8 @@ namespace nvrhi::d3d12
 
         if (m_EnableAutomaticBarriers)
         {
-            requireBufferState(as->dataBuffer, nvrhi::ResourceStates::AccelStructWrite);
-            requireBufferState(instanceBuffer, nvrhi::ResourceStates::AccelStructBuildInput);
+            requireBufferState(as->dataBuffer, rhi::ResourceStates::AccelStructWrite);
+            requireBufferState(instanceBuffer, rhi::ResourceStates::AccelStructBuildInput);
         }
         commitBarriers();
 
@@ -1663,4 +1663,4 @@ namespace nvrhi::d3d12
         if (as->desc.trackLiveness)
             m_Instance->referencedResources.push_back(as);
     }
-} // namespace nvrhi::d3d12
+} // namespace rhi::d3d12

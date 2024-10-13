@@ -24,7 +24,7 @@
 
 #include <cstddef>
 
-using namespace nvrhi;
+using namespace rhi;
 
 // Set this macro to 1 to run the unit test at initialization time - see below
 #define SPARSE_BITSET_UNIT_TEST 0
@@ -318,7 +318,7 @@ bool sparse_bitset::isOrdered() const
 
 #include <cassert>
 
-namespace nvrhi
+namespace rhi
 {
 
 class sparse_bitset_test
@@ -415,5 +415,5 @@ public:
 
 static bool g_SparseBitSetUnitTest = sparse_bitset_test::run();
 
-} // namespace nvrhi
+} // namespace rhi
 #endif

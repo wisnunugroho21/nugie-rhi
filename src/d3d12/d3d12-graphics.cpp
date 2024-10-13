@@ -22,10 +22,10 @@
 
 #include "d3d12-backend.h"
 
-#include <nvrhi/common/misc.h>
+#include <rhi/common/misc.h>
 #include <sstream>
 
-namespace nvrhi::d3d12
+namespace rhi::d3d12
 {
 
     Object GraphicsPipeline::getNativeObject(ObjectType objectType)
@@ -127,7 +127,7 @@ namespace nvrhi::d3d12
 
         RefCountPtr<ID3D12PipelineState> pipelineState;
 
-#if NVRHI_D3D12_WITH_NVAPI
+#if RHI_D3D12_WITH_NVAPI
         std::vector<const NVAPI_D3D12_PSO_EXTENSION_DESC*> extensions;
 
         shader = checked_cast<Shader*>(state.VS.Get()); if (shader) extensions.insert(extensions.end(), shader->extensions.begin(), shader->extensions.end());
@@ -187,7 +187,7 @@ namespace nvrhi::d3d12
         return createHandleForNativeGraphicsPipeline(pRS, pPSO, desc, fb->getFramebufferInfo());
     }
 
-    nvrhi::GraphicsPipelineHandle Device::createHandleForNativeGraphicsPipeline(IRootSignature* rootSignature, ID3D12PipelineState* pipelineState, const GraphicsPipelineDesc& desc, const FramebufferInfo& framebufferInfo)
+    rhi::GraphicsPipelineHandle Device::createHandleForNativeGraphicsPipeline(IRootSignature* rootSignature, ID3D12PipelineState* pipelineState, const GraphicsPipelineDesc& desc, const FramebufferInfo& framebufferInfo)
     {
         if (rootSignature == nullptr)
             return nullptr;
@@ -420,7 +420,7 @@ namespace nvrhi::d3d12
 
             if (shouldEnableVariableRateShading)
             {
-                setTextureState(framebufferDesc.shadingRateAttachment.texture, nvrhi::TextureSubresourceSet(0, 1, 0, 1), nvrhi::ResourceStates::ShadingRateSurface);
+                setTextureState(framebufferDesc.shadingRateAttachment.texture, rhi::TextureSubresourceSet(0, 1, 0, 1), rhi::ResourceStates::ShadingRateSurface);
                 Texture* texture = checked_cast<Texture*>(framebufferDesc.shadingRateAttachment.texture);
                 m_ActiveCommandList->commandList6->RSSetShadingRateImage(texture->resource);
             }
@@ -465,7 +465,7 @@ namespace nvrhi::d3d12
             }
         }
 
-#if NVRHI_D3D12_WITH_NVAPI
+#if RHI_D3D12_WITH_NVAPI
         bool updateSPS = m_CurrentSinglePassStereoState != pso->desc.renderState.singlePassStereo;
 
         if (updateSPS)
@@ -698,4 +698,4 @@ namespace nvrhi::d3d12
         outState.ForcedSampleCount = inState.forcedSampleCount;
     }
 
-} // namespace nvrhi::d3d12
+} // namespace rhi::d3d12

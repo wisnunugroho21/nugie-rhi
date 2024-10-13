@@ -22,11 +22,11 @@
 
 #pragma once
 
-#include <nvrhi/nvrhi.h>
+#include <rhi/rhi.h>
 #include <memory>
 #include <unordered_map>
 
-namespace nvrhi
+namespace rhi
 {
     struct BufferStateExtension
     {
@@ -137,4 +137,4 @@ namespace nvrhi
 
     bool verifyPermanentResourceState(ResourceStates permanentState, ResourceStates requiredState, bool isTexture, const std::string& debugName, IMessageCallback* messageCallback);
 
-} // namespace nvrhi
+} // namespace rhi

@@ -22,9 +22,9 @@
 
 #pragma once
 
-#include <nvrhi/nvrhi.h>
+#include <rhi/rhi.h>
 
-namespace nvrhi::validation
+namespace rhi::validation
 {
-    NVRHI_API DeviceHandle createValidationLayer(IDevice* underlyingDevice);
+    RHI_API DeviceHandle createValidationLayer(IDevice* underlyingDevice);
 }

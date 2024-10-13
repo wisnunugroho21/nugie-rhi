@@ -21,13 +21,13 @@
 */
 
 #include "vulkan-backend.h"
-#include <nvrhi/common/misc.h>
+#include <rhi/common/misc.h>
 
-namespace nvrhi::vulkan
+namespace rhi::vulkan
 {
 
     template <typename T>
-    using attachment_vector = nvrhi::static_vector<T, c_MaxRenderTargets + 1>; // render targets + depth
+    using attachment_vector = rhi::static_vector<T, c_MaxRenderTargets + 1>; // render targets + depth
 
     MeshletPipelineHandle Device::createMeshletPipeline(const MeshletPipelineDesc& desc, IFramebuffer* _fb)
     {
@@ -277,7 +277,7 @@ namespace nvrhi::vulkan
 
         if (!state.viewport.viewports.empty() && arraysAreDifferent(state.viewport.viewports, m_CurrentMeshletState.viewport.viewports))
         {
-            nvrhi::static_vector<vk::Viewport, c_MaxViewports> viewports;
+            rhi::static_vector<vk::Viewport, c_MaxViewports> viewports;
             for (const auto& vp : state.viewport.viewports)
             {
                 viewports.push_back(VKViewportWithDXCoords(vp));
@@ -288,7 +288,7 @@ namespace nvrhi::vulkan
 
         if (!state.viewport.scissorRects.empty() && arraysAreDifferent(state.viewport.scissorRects, m_CurrentMeshletState.viewport.scissorRects))
         {
-            nvrhi::static_vector<vk::Rect2D, c_MaxViewports> scissors;
+            rhi::static_vector<vk::Rect2D, c_MaxViewports> scissors;
             for (const auto& sc : state.viewport.scissorRects)
             {
                 scissors.push_back(vk::Rect2D(vk::Offset2D(sc.minX, sc.minY),
@@ -348,4 +348,4 @@ namespace nvrhi::vulkan
         m_CurrentCmdBuf->cmdBuf.drawMeshTasksNV(groupsX, 0);
     }
 
-} // namespace nvrhi::vulkan
+} // namespace rhi::vulkan

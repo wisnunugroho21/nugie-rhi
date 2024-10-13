@@ -23,12 +23,12 @@
 
 #include "d3d11-backend.h"
 
-#include <nvrhi/common/misc.h>
-#include <nvrhi/utils.h>
+#include <rhi/common/misc.h>
+#include <rhi/utils.h>
 #include <sstream>
 #include <iomanip>
 
-namespace nvrhi::d3d11
+namespace rhi::d3d11
 {
 
     Object Buffer::getNativeObject(ObjectType objectType)
@@ -405,4 +405,4 @@ namespace nvrhi::d3d11
     }
     
 	
-} // nanmespace nvrhi::d3d11
+} // nanmespace rhi::d3d11

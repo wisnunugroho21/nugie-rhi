@@ -22,11 +22,11 @@
 
 #include "state-tracking.h"
 
-#include <nvrhi/utils.h>
+#include <rhi/utils.h>
 
 #include <sstream>
 
-namespace nvrhi
+namespace rhi
 {
     bool verifyPermanentResourceState(ResourceStates permanentState, ResourceStates requiredState, bool isTexture, const std::string& debugName, IMessageCallback* messageCallback)
     {
@@ -444,4 +444,4 @@ namespace nvrhi
 
         return tracking;
     }
-} // namespace nvrhi
+} // namespace rhi

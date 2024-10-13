@@ -21,9 +21,9 @@
 */
 
 #include "vulkan-backend.h"
-#include <nvrhi/common/misc.h>
+#include <rhi/common/misc.h>
 
-namespace nvrhi::vulkan
+namespace rhi::vulkan
 {
 
     EventQueryHandle Device::createEventQuery(void)
@@ -217,7 +217,7 @@ namespace nvrhi::vulkan
                                 .setPMarkerName(name);
             m_CurrentCmdBuf->cmdBuf.debugMarkerBeginEXT(&markerInfo);
         }
-#if NVRHI_WITH_AFTERMATH
+#if RHI_WITH_AFTERMATH
         if (m_Device->isAftermathEnabled())
         {
             const size_t aftermathMarker = m_AftermathTracker.pushEvent(name);
@@ -234,9 +234,9 @@ namespace nvrhi::vulkan
 
             m_CurrentCmdBuf->cmdBuf.debugMarkerEndEXT();
         }
-#if NVRHI_WITH_AFTERMATH
+#if RHI_WITH_AFTERMATH
         m_AftermathTracker.popEvent();
 #endif
     }
 
-} // namespace nvrhi::vulkan
+} // namespace rhi::vulkan

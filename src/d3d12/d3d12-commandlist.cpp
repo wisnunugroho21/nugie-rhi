@@ -24,9 +24,9 @@
 #include <pix.h>
 #include <sstream>
 
-#include <nvrhi/common/misc.h>
+#include <rhi/common/misc.h>
 
-namespace nvrhi::d3d12
+namespace rhi::d3d12
 {
     CommandList::CommandList(Device* device, const Context& context, DeviceResources& resources, const CommandListParameters& params)
         : m_Context(context)
@@ -38,7 +38,7 @@ namespace nvrhi::d3d12
         , m_StateTracker(context.messageCallback)
         , m_Desc(params)
     {
-#if NVRHI_WITH_AFTERMATH
+#if RHI_WITH_AFTERMATH
         if (m_Device->isAftermathEnabled())
             m_Device->getAftermathCrashDumpHelper().registerAftermathMarkerTracker(&m_AftermathTracker);
 #endif
@@ -46,7 +46,7 @@ namespace nvrhi::d3d12
 
     CommandList::~CommandList()
     {
-#if NVRHI_WITH_AFTERMATH
+#if RHI_WITH_AFTERMATH
         if (m_Device->isAftermathEnabled())
             m_Device->getAftermathCrashDumpHelper().unRegisterAftermathMarkerTracker(&m_AftermathTracker);
 #endif
@@ -105,7 +105,7 @@ namespace nvrhi::d3d12
         commandList->commandList->QueryInterface(IID_PPV_ARGS(&commandList->commandList4));
         commandList->commandList->QueryInterface(IID_PPV_ARGS(&commandList->commandList6));
 
-#if NVRHI_WITH_AFTERMATH
+#if RHI_WITH_AFTERMATH
         if (m_Device->isAftermathEnabled())
             GFSDK_Aftermath_DX12_CreateContextHandle(commandList->commandList, &commandList->aftermathContext);
 #endif
@@ -162,7 +162,7 @@ namespace nvrhi::d3d12
         return buffer->gpuVA;
     }
 
-    nvrhi::IDevice* CommandList::getDevice()
+    rhi::IDevice* CommandList::getDevice()
     {
         return m_Device;
     }
@@ -170,7 +170,7 @@ namespace nvrhi::d3d12
     void CommandList::beginMarker(const char* name)
     {
         PIXBeginEvent(m_ActiveCommandList->commandList, 0, name);
-#if NVRHI_WITH_AFTERMATH
+#if RHI_WITH_AFTERMATH
         if (m_Device->isAftermathEnabled())
         {
             const size_t aftermathMarker = m_AftermathTracker.pushEvent(name);
@@ -182,7 +182,7 @@ namespace nvrhi::d3d12
     void CommandList::endMarker()
     {
         PIXEndEvent(m_ActiveCommandList->commandList);
-#if NVRHI_WITH_AFTERMATH
+#if RHI_WITH_AFTERMATH
         if (m_Device->isAftermathEnabled())
             m_AftermathTracker.popEvent();
 #endif
@@ -284,7 +284,7 @@ namespace nvrhi::d3d12
     {
         m_ActiveCommandList->commandList->ClearState(nullptr);
 
-#if NVRHI_D3D12_WITH_NVAPI
+#if RHI_D3D12_WITH_NVAPI
         if (m_CurrentGraphicsStateValid && m_CurrentSinglePassStereoState.enabled)
         {
             NvAPI_Status Status = NvAPI_D3D12_SetSinglePassStereoMode(m_ActiveCommandList->commandList, 
@@ -308,7 +308,7 @@ namespace nvrhi::d3d12
         m_StateTracker.keepTextureInitialStates();
         commitBarriers();
 
-#ifdef NVRHI_WITH_RTXMU
+#ifdef RHI_WITH_RTXMU
         if (!m_Instance->rtxmuBuildIds.empty())
         {
             m_Context.rtxMemUtil->PopulateCompactionSizeCopiesCommandList(m_ActiveCommandList->commandList4, m_Instance->rtxmuBuildIds);
@@ -365,4 +365,4 @@ namespace nvrhi::d3d12
         return instance;
     }
 
-} // namespace nvrhi::d3d12
+} // namespace rhi::d3d12

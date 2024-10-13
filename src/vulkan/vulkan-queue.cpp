@@ -21,9 +21,9 @@
 */
 
 #include "vulkan-backend.h"
-#include "nvrhi/common/misc.h"
+#include "rhi/common/misc.h"
 
-namespace nvrhi::vulkan
+namespace rhi::vulkan
 {
 
     TrackedCommandBuffer::~TrackedCommandBuffer()
@@ -205,7 +205,7 @@ namespace nvrhi::vulkan
                 cmd->submissionID = 0;
                 m_CommandBuffersPool.push_back(cmd);
 
-#ifdef NVRHI_WITH_RTXMU
+#ifdef RHI_WITH_RTXMU
                 if (!cmd->rtxmuBuildIds.empty())
                 {
                     std::lock_guard lockGuard(m_Context.rtxMuResources->asListMutex);
@@ -303,4 +303,4 @@ namespace nvrhi::vulkan
 
         return (result == vk::Result::eSuccess);
     }
-} // namespace nvrhi::vulkan
+} // namespace rhi::vulkan

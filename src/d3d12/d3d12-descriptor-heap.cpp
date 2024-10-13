@@ -22,7 +22,7 @@
 
 #include "d3d12-backend.h"
 
-namespace nvrhi::d3d12
+namespace rhi::d3d12
 {
     
     StaticDescriptorHeap::StaticDescriptorHeap(const Context& context)
@@ -222,4 +222,4 @@ namespace nvrhi::d3d12
         m_Context.device->CopyDescriptorsSimple(count, getCpuHandleShaderVisible(index), getCpuHandle(index), m_HeapType);
     }
 
-} // namespace nvrhi::d3d12
+} // namespace rhi::d3d12

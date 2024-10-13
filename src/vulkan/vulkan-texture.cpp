@@ -23,9 +23,9 @@
 #include <algorithm>
 
 #include "vulkan-backend.h"
-#include <nvrhi/common/misc.h>
+#include <rhi/common/misc.h>
 
-namespace nvrhi::vulkan
+namespace rhi::vulkan
 {
 
     static vk::ImageType textureDimensionToImageType(TextureDimension dimension)
@@ -283,7 +283,7 @@ namespace nvrhi::vulkan
 
         view.subresource = subresource;
 
-        auto vkformat = nvrhi::vulkan::convertFormat(format);
+        auto vkformat = rhi::vulkan::convertFormat(format);
 
         vk::ImageAspectFlags aspectflags = guessSubresourceImageAspectFlags(vk::Format(vkformat), viewtype);
         view.subresourceRange = vk::ImageSubresourceRange()
@@ -406,16 +406,16 @@ namespace nvrhi::vulkan
             resolvedSrcSlice.arraySlice, 1
         );
 
-        auto srcFormat = nvrhi::vulkan::convertFormat(src->desc.format);
-        vk::ImageAspectFlags srcAspectFlags = guessSubresourceImageAspectFlags(vk::Format(srcFormat), nvrhi::vulkan::Texture::TextureSubresourceViewType::AllAspects);
+        auto srcFormat = rhi::vulkan::convertFormat(src->desc.format);
+        vk::ImageAspectFlags srcAspectFlags = guessSubresourceImageAspectFlags(vk::Format(srcFormat), rhi::vulkan::Texture::TextureSubresourceViewType::AllAspects);
 
         TextureSubresourceSet dstSubresource = TextureSubresourceSet(
             resolvedDstSlice.mipLevel, 1,
             resolvedDstSlice.arraySlice, 1
         );
 
-        auto dstFormat = nvrhi::vulkan::convertFormat(dst->desc.format);
-        vk::ImageAspectFlags dstAspectFlags = guessSubresourceImageAspectFlags(vk::Format(dstFormat), nvrhi::vulkan::Texture::TextureSubresourceViewType::AllAspects);
+        auto dstFormat = rhi::vulkan::convertFormat(dst->desc.format);
+        vk::ImageAspectFlags dstAspectFlags = guessSubresourceImageAspectFlags(vk::Format(dstFormat), rhi::vulkan::Texture::TextureSubresourceViewType::AllAspects);
 
 
         // When copying between block-compressed and uint textures, the extents and offsets are scaled by the block size.
@@ -843,4 +843,4 @@ namespace nvrhi::vulkan
         m_Context.device.destroySampler(sampler);
     }
 
-} // namespace nvrhi::vulkan
+} // namespace rhi::vulkan

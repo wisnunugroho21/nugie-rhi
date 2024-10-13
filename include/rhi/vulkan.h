@@ -23,9 +23,9 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
-#include <nvrhi/nvrhi.h>
+#include <rhi/rhi.h>
 
-namespace nvrhi 
+namespace rhi 
 {
     namespace ObjectTypes
     {
@@ -33,9 +33,9 @@ namespace nvrhi
     };
 }
 
-namespace nvrhi::vulkan
+namespace rhi::vulkan
 {
-    class IDevice : public nvrhi::IDevice
+    class IDevice : public rhi::IDevice
     {
     public:
         // Additional Vulkan-specific public methods
@@ -80,9 +80,9 @@ namespace nvrhi::vulkan
         bool aftermathEnabled = false;
     };
 
-    NVRHI_API DeviceHandle createDevice(const DeviceDesc& desc);
+    RHI_API DeviceHandle createDevice(const DeviceDesc& desc);
    
-    NVRHI_API VkFormat convertFormat(nvrhi::Format format);
+    RHI_API VkFormat convertFormat(rhi::Format format);
 
-    NVRHI_API const char* resultToString(VkResult result);
+    RHI_API const char* resultToString(VkResult result);
 }

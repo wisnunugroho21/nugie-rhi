@@ -25,7 +25,7 @@
 #include <vector>
 #include <cstdint>
 
-namespace nvrhi {
+namespace rhi {
 
 // This is a container for bits that has virtually unlimited capacity, otherwise similar to std::bitset.
 // It maintains a sorted vector of elements where each element is a 32-bit word of bits at a given offset.
@@ -113,4 +113,4 @@ inline void operator|=(sparse_bitset& a, const sparse_bitset& b)
     a.include(b);
 }
 
-} // namespace nvrhi
+} // namespace rhi

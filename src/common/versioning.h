@@ -20,7 +20,7 @@
 * DEALINGS IN THE SOFTWARE.
 */
 
-namespace nvrhi
+namespace rhi
 {
     /*
     Version words are used to track the usage of upload buffers, scratch buffers,

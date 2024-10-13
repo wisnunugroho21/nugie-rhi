@@ -22,15 +22,15 @@
 
 #include "d3d11-backend.h"
 
-#include <nvrhi/common/containers.h>
-#include <nvrhi/common/misc.h>
-#include <nvrhi/utils.h>
+#include <rhi/common/containers.h>
+#include <rhi/common/misc.h>
+#include <rhi/utils.h>
 
 #include <sstream>
 #include <iomanip>
 
 
-namespace nvrhi::d3d11
+namespace rhi::d3d11
 {
 
 static bool checkedCreateQuery(const D3D11_QUERY_DESC& queryDesc, const char* name, const Context& context, ID3D11Query** pQuery)
@@ -243,4 +243,4 @@ void Device::resetTimerQuery(ITimerQuery* _query)
     query->time = 0.f;
 }
 
-} // namespace nvrhi::d3d11
+} // namespace rhi::d3d11

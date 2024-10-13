@@ -22,9 +22,9 @@
 
 #include "d3d12-backend.h"
 
-namespace nvrhi::d3d12
+namespace rhi::d3d12
 {
-    DXGI_FORMAT convertFormat(nvrhi::Format format)
+    DXGI_FORMAT convertFormat(rhi::Format format)
     {
         return getDxgiFormatMapping(format).srvFormat;
     }
@@ -311,4 +311,4 @@ namespace nvrhi::d3d12
         }
     }
 
-} // namespace nvrhi::d3d12
+} // namespace rhi::d3d12

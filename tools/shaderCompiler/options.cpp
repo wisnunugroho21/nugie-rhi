@@ -62,7 +62,7 @@ using namespace cxxopts;
 
 bool CommandLineOptions::parse(int argc, char** argv)
 {
-	Options options(argv[0], "Batch shader compiler for NVRHI");
+	Options options(argv[0], "Batch shader compiler for RHI");
 
 	string platformName;
 

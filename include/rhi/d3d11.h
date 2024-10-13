@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include <nvrhi/nvrhi.h>
+#include <rhi/rhi.h>
 
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -30,12 +30,12 @@
 
 #include <d3d11.h>
 
-namespace nvrhi::ObjectTypes
+namespace rhi::ObjectTypes
 {
     constexpr ObjectType Nvrhi_D3D11_Device = 0x00010101;
 };
 
-namespace nvrhi::d3d11
+namespace rhi::d3d11
 {
     struct DeviceDesc
     {
@@ -44,7 +44,7 @@ namespace nvrhi::d3d11
         bool aftermathEnabled = false;
     };
 
-    NVRHI_API DeviceHandle createDevice(const DeviceDesc& desc);
+    RHI_API DeviceHandle createDevice(const DeviceDesc& desc);
 
-    NVRHI_API DXGI_FORMAT convertFormat(nvrhi::Format format);
+    RHI_API DXGI_FORMAT convertFormat(rhi::Format format);
 }

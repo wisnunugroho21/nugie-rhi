@@ -24,17 +24,17 @@
 #include <cstdint>
 #include <type_traits>
 
-namespace nvrhi
+namespace rhi
 {
     typedef uint32_t ObjectType;
 
     // ObjectTypes namespace contains identifiers for various object types. 
-    // All constants have to be distinct. Implementations of NVRHI may extend the list.
+    // All constants have to be distinct. Implementations of RHI may extend the list.
     //
     // The encoding is chosen to minimize potential conflicts between implementations.
     // 0x00aabbcc, where:
     //   aa is GAPI, 1 for D3D11, 2 for D3D12, 3 for VK
-    //   bb is layer, 0 for native GAPI objects, 1 for reference NVRHI backend, 2 for user-defined backends
+    //   bb is layer, 0 for native GAPI objects, 1 for reference RHI backend, 2 for user-defined backends
     //   cc is a sequential number
 
     namespace ObjectTypes
@@ -386,4 +386,4 @@ namespace nvrhi
         }
     };
 
-} // namespace nvrhi
+} // namespace rhi

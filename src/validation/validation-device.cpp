@@ -22,12 +22,12 @@
 
 #include "validation-backend.h"
 
-#include <nvrhi/utils.h>
-#include <nvrhi/common/misc.h>
+#include <rhi/utils.h>
+#include <rhi/common/misc.h>
 
 #include <sstream>
 
-namespace nvrhi::validation
+namespace rhi::validation
 {
     DeviceHandle createValidationLayer(IDevice* underlyingDevice)
     {
@@ -531,7 +531,7 @@ namespace nvrhi::validation
         return m_Device->createShaderSpecialization(baseShader, constants, numConstants);
     }
 
-    nvrhi::ShaderLibraryHandle DeviceWrapper::createShaderLibrary(const void* binary, const size_t binarySize)
+    rhi::ShaderLibraryHandle DeviceWrapper::createShaderLibrary(const void* binary, const size_t binarySize)
     {
         return m_Device->createShaderLibrary(binary, binarySize);
     }
@@ -1136,7 +1136,7 @@ namespace nvrhi::validation
         return m_Device->createMeshletPipeline(pipelineDesc, fb);
     }
 
-    nvrhi::rt::PipelineHandle DeviceWrapper::createRayTracingPipeline(const rt::PipelineDesc& desc)
+    rhi::rt::PipelineHandle DeviceWrapper::createRayTracingPipeline(const rt::PipelineDesc& desc)
     {
         return m_Device->createRayTracingPipeline(desc);
     }
@@ -1999,4 +1999,4 @@ namespace nvrhi::validation
         BitsetToStream(set.CB, os, "b", first);
         return os;
     }
-} // namespace nvrhi::validation
+} // namespace rhi::validation

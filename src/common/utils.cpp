@@ -20,10 +20,10 @@
 * DEALINGS IN THE SOFTWARE.
 */
 
-#include <nvrhi/utils.h>
+#include <rhi/utils.h>
 #include <sstream>
 
-namespace nvrhi::utils
+namespace rhi::utils
 {
     BlendState::RenderTarget CreateAddBlendState(
         BlendFactor srcBlend,
@@ -66,12 +66,12 @@ namespace nvrhi::utils
     }
 
     bool CreateBindingSetAndLayout(
-        nvrhi::IDevice* device,
-        nvrhi::ShaderType visibility,
+        rhi::IDevice* device,
+        rhi::ShaderType visibility,
         uint32_t registerSpace,
-        const nvrhi::BindingSetDesc& bindingSetDesc,
-        nvrhi::BindingLayoutHandle& bindingLayout,
-        nvrhi::BindingSetHandle& bindingSet)
+        const rhi::BindingSetDesc& bindingSetDesc,
+        rhi::BindingLayoutHandle& bindingLayout,
+        rhi::BindingSetHandle& bindingSet)
     {
         auto convertSetToLayout = [](const BindingSetItemArray& setDesc, BindingLayoutItemArray& layoutDesc)
         {
@@ -88,7 +88,7 @@ namespace nvrhi::utils
 
         if (!bindingLayout)
         {
-            nvrhi::BindingLayoutDesc bindingLayoutDesc;
+            rhi::BindingLayoutDesc bindingLayoutDesc;
             bindingLayoutDesc.visibility = visibility;
             bindingLayoutDesc.registerSpace = registerSpace;
             convertSetToLayout(bindingSetDesc.bindings, bindingLayoutDesc.bindings);
@@ -148,7 +148,7 @@ namespace nvrhi::utils
         commandList->setBufferState(buffer, ResourceStates::UnorderedAccess);
     }
 
-    Format ChooseFormat(IDevice* device, nvrhi::FormatSupport requiredFeatures, const nvrhi::Format* requestedFormats, size_t requestedFormatCount)
+    Format ChooseFormat(IDevice* device, rhi::FormatSupport requiredFeatures, const rhi::Format* requestedFormats, size_t requestedFormatCount)
     {
         assert(device);
         assert(requestedFormats || requestedFormatCount == 0);

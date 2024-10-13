@@ -22,10 +22,10 @@
 
 #include "d3d12-backend.h"
 
-#include <nvrhi/common/misc.h>
+#include <rhi/common/misc.h>
 #include <sstream>
 
-namespace nvrhi::d3d12
+namespace rhi::d3d12
 {
     void CommandList::setResourceStatesForBindingSet(IBindingSet* _bindingSet)
     {
@@ -292,4 +292,4 @@ namespace nvrhi::d3d12
         return m_StateTracker.getBufferState(buffer);
     }
     
-} // namespace nvrhi::d3d12
+} // namespace rhi::d3d12

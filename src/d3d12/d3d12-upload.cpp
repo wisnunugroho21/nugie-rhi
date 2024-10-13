@@ -22,10 +22,10 @@
 
 #include "d3d12-backend.h"
 
-#include <nvrhi/common/misc.h>
+#include <rhi/common/misc.h>
 #include <sstream>
 
-namespace nvrhi::d3d12
+namespace rhi::d3d12
 {
 
     BufferChunk::~BufferChunk()
@@ -252,4 +252,4 @@ namespace nvrhi::d3d12
                 chunk->version = submittedVersion;
         }
     }
-} // namespace nvrhi::d3d12
+} // namespace rhi::d3d12

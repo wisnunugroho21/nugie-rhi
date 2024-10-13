@@ -22,12 +22,12 @@
 
 #include "d3d11-backend.h"
 
-#include <nvrhi/utils.h>
-#include <nvrhi/common/misc.h>
+#include <rhi/utils.h>
+#include <rhi/common/misc.h>
 #include <sstream>
 #include <iomanip>
 
-namespace nvrhi::d3d11
+namespace rhi::d3d11
 {
 
     Object Texture::getNativeObject(ObjectType objectType)
@@ -242,7 +242,7 @@ namespace nvrhi::d3d11
         return false;
     }
     
-    nvrhi::TextureHandle Device::createHandleForNativeTexture(ObjectType objectType, Object _texture, const TextureDesc& desc)
+    rhi::TextureHandle Device::createHandleForNativeTexture(ObjectType objectType, Object _texture, const TextureDesc& desc)
     {
         if (!_texture.pointer)
             return nullptr;
@@ -845,4 +845,4 @@ namespace nvrhi::d3d11
     }
 
 
-} // nanmespace nvrhi::d3d11
+} // nanmespace rhi::d3d11

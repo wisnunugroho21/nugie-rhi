@@ -20,10 +20,10 @@
 * DEALINGS IN THE SOFTWARE.
 */
 
-#include <nvrhi/nvrhi.h>
+#include <rhi/rhi.h>
 #include <cmath>
 
-namespace nvrhi
+namespace rhi
 {
     // Do not move this function into the header.
     bool verifyHeaderVersion(uint32_t version)
@@ -196,4 +196,4 @@ namespace nvrhi
         }
     }
 
-} // namespace nvrhi
+} // namespace rhi
