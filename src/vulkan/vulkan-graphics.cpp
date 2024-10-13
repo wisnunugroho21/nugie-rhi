@@ -85,8 +85,8 @@ namespace rhi::vulkan
             attachmentDescs[i] = vk::AttachmentDescription2()
                                         .setFormat(attachmentFormat)
                                         .setSamples(t->imageInfo.samples)
-                                        .setLoadOp(vk::AttachmentLoadOp::eLoad)
-                                        .setStoreOp(vk::AttachmentStoreOp::eStore)
+                                        .setLoadOp(rt.clearColor.isClear ? vk::AttachmentLoadOp::eClear : vk::AttachmentLoadOp::eLoad)
+                                        .setStoreOp(rt.dontStore ? vk::AttachmentStoreOp::eDontCare : vk::AttachmentStoreOp::eStore)
                                         .setInitialLayout(vk::ImageLayout::eColorAttachmentOptimal)
                                         .setFinalLayout(vk::ImageLayout::eColorAttachmentOptimal);
 
@@ -128,8 +128,8 @@ namespace rhi::vulkan
             attachmentDescs.push_back(vk::AttachmentDescription2()
                                         .setFormat(texture->imageInfo.format)
                                         .setSamples(texture->imageInfo.samples)
-                                        .setLoadOp(vk::AttachmentLoadOp::eLoad)
-                                        .setStoreOp(vk::AttachmentStoreOp::eStore)
+                                        .setLoadOp(att.clearDepth.isClear || att.clearStencil.isClear ? vk::AttachmentLoadOp::eClear : vk::AttachmentLoadOp::eLoad)
+                                        .setStoreOp(att.dontStore ? vk::AttachmentStoreOp::eDontCare : vk::AttachmentStoreOp::eStore)
                                         .setInitialLayout(depthLayout)
                                         .setFinalLayout(depthLayout));
 
@@ -172,8 +172,8 @@ namespace rhi::vulkan
             auto vrsAttachmentDesc = vk::AttachmentDescription2()
                 .setFormat(vk::Format::eR8Uint)
                 .setSamples(vk::SampleCountFlagBits::e1)
-                .setLoadOp(vk::AttachmentLoadOp::eLoad)
-                .setStoreOp(vk::AttachmentStoreOp::eStore)
+                .setLoadOp(vk::AttachmentLoadOp::eClear)
+                .setStoreOp(vrsAttachment.dontStore ? vk::AttachmentStoreOp::eDontCare : vk::AttachmentStoreOp::eStore)
                 .setInitialLayout(vk::ImageLayout::eFragmentShadingRateAttachmentOptimalKHR)
                 .setFinalLayout(vk::ImageLayout::eFragmentShadingRateAttachmentOptimalKHR);
 
@@ -657,13 +657,35 @@ namespace rhi::vulkan
 
         if(!m_CurrentGraphicsState.framebuffer)
         {
+            std::vector<vk::ClearValue> clearValues(fb->getDesc().colorAttachments.size());
+            for (uint8_t i = 0; i < clearValues.size(); i++)
+            {
+                Color clearClr = fb->getDesc().colorAttachments[i].clearColor.value;
+                clearValues[i].setColor(vk::ClearColorValue(clearClr.r, clearClr.g, clearClr.b, clearClr.a));
+            }
+
+            const FramebufferAttachment& depthAtt = fb->getDesc().depthAttachment;
+            if (depthAtt.clearDepth.isClear || depthAtt.clearStencil.isClear)
+            {
+                vk::ClearDepthStencilValue vkDepthClear;
+
+                if (depthAtt.clearDepth.isClear) 
+                    vkDepthClear.setDepth(depthAtt.clearDepth.value);
+
+                if (depthAtt.clearStencil.isClear) 
+                    vkDepthClear.setStencil(depthAtt.clearStencil.value);
+
+                clearValues.push_back(vkDepthClear);
+            }
+
             m_CurrentCmdBuf->cmdBuf.beginRenderPass(vk::RenderPassBeginInfo()
                 .setRenderPass(fb->renderPass)
                 .setFramebuffer(fb->framebuffer)
                 .setRenderArea(vk::Rect2D()
                     .setOffset(vk::Offset2D(0, 0))
                     .setExtent(vk::Extent2D(fb->framebufferInfo.width, fb->framebufferInfo.height)))
-                .setClearValueCount(0),
+                .setClearValueCount(uint32_t(clearValues.size()))
+                .setPClearValues(clearValues.data()),
                 vk::SubpassContents::eInline);
 
             m_CurrentCmdBuf->referencedResources.push_back(state.framebuffer);
