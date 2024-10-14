@@ -68,7 +68,7 @@ namespace rhi::d3d12
             else
                 return nullptr;
 
-        case ObjectTypes::Nvrhi_D3D12_CommandList:
+        case ObjectTypes::Rhi_D3D12_CommandList:
             return this;
 
         default:

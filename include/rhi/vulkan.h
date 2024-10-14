@@ -29,7 +29,7 @@ namespace rhi
 {
     namespace ObjectTypes
     {
-        constexpr ObjectType Nvrhi_VK_Device = 0x00030101;
+        constexpr ObjectType Rhi_VK_Device = 0x00030101;
     };
 }
 

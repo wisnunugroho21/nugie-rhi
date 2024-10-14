@@ -262,7 +262,7 @@ namespace rhi::vulkan
             return Object(m_Context.physicalDevice);
         case ObjectTypes::VK_Instance:
             return Object(m_Context.instance);
-        case ObjectTypes::Nvrhi_VK_Device:
+        case ObjectTypes::Rhi_VK_Device:
             return Object(this);
         default:
             return nullptr;

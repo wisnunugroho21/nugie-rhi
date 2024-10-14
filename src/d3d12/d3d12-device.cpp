@@ -326,7 +326,7 @@ namespace rhi::d3d12
         {
         case ObjectTypes::D3D12_Device:
             return Object(m_Context.device);
-        case ObjectTypes::Nvrhi_D3D12_Device:
+        case ObjectTypes::Rhi_D3D12_Device:
             return Object(this);
         default:
             return nullptr;
